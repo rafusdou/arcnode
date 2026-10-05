@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { ARCNODE_PLANS } from "../data/plans.js";
+import { detectCardBrand, formatCardNumber, formatExpiry, isExpiryValid, luhnCheck } from "../utils/card.js";
 
 const SERVER_TYPES = [
   { value: "paper", label: "Paper (vanilla optimizado)" },
@@ -104,6 +105,10 @@ export default function Checkout() {
     cardCvc: "",
   });
   const set = (key) => (e) => setForm((f) => ({ ...f, [key]: e.target.value }));
+  const setCardNumber = (e) => setForm((f) => ({ ...f, cardNumber: formatCardNumber(e.target.value) }));
+  const setCardExpiry = (e) => setForm((f) => ({ ...f, cardExpiry: formatExpiry(e.target.value) }));
+  const setCardCvc = (e) => setForm((f) => ({ ...f, cardCvc: e.target.value.replace(/\D/g, "").slice(0, 4) }));
+  const cardBrand = detectCardBrand(form.cardNumber.replace(/\D/g, ""));
 
   const [step, setStep] = useState("form"); // form | processing | success | error
   const [processingLabel, setProcessingLabel] = useState("Validando método de pago…");
@@ -116,6 +121,26 @@ export default function Checkout() {
       setError("Completá nombre, email y una contraseña de al menos 8 caracteres.");
       setStep("error");
       return;
+    }
+
+    if (pay === "card") {
+      const digits = form.cardNumber.replace(/\D/g, "");
+      if (!luhnCheck(digits)) {
+        setError("El número de tarjeta no es válido.");
+        setStep("error");
+        return;
+      }
+      if (!isExpiryValid(form.cardExpiry)) {
+        setError("La fecha de vencimiento no es válida.");
+        setStep("error");
+        return;
+      }
+      const cvcLen = cardBrand?.id === "amex" ? 4 : 3;
+      if (form.cardCvc.length !== cvcLen) {
+        setError(`El CVC debe tener ${cvcLen} dígitos.`);
+        setStep("error");
+        return;
+      }
     }
 
     setStep("processing");
@@ -242,7 +267,7 @@ export default function Checkout() {
           <div className="checkout-card">
             <h3>Método de pago</h3>
             <div className="pay-methods">
-              {[["card", "💳", "Tarjeta"], ["mp", "🇦🇷", "MercadoPago"], ["crypto", "₿", "Cripto"]].map(([k, ic, l]) => (
+              {[["card", "💳", "Tarjeta"], ["mp", "🇦🇷", "MercadoPago"]].map(([k, ic, l]) => (
                 <div key={k} className={"pay-method " + (pay === k ? "active" : "")} onClick={() => setPay(k)}>
                   <span className="pay-method-icon">{ic}</span>{l}
                 </div>
@@ -250,10 +275,26 @@ export default function Checkout() {
             </div>
             {pay === "card" && (
               <div className="input-row">
-                <div className="input"><label>Número de tarjeta</label><input type="text" placeholder="1234 5678 9012 3456" value={form.cardNumber} onChange={set("cardNumber")} /></div>
+                <div className="input">
+                  <label>Número de tarjeta</label>
+                  <div style={{ position: "relative" }}>
+                    <input
+                      type="text" inputMode="numeric" placeholder="1234 5678 9012 3456"
+                      value={form.cardNumber} onChange={setCardNumber}
+                      style={{ paddingRight: cardBrand ? 70 : undefined }}
+                    />
+                    {cardBrand && (
+                      <span style={{
+                        position: "absolute", right: 12, top: "50%", transform: "translateY(-50%)",
+                        fontSize: 11, fontWeight: 700, color: "var(--blue)",
+                        background: "rgba(55,138,221,0.1)", padding: "3px 8px", borderRadius: 6,
+                      }}>{cardBrand.label}</span>
+                    )}
+                  </div>
+                </div>
                 <div className="input-row" style={{ gridTemplateColumns: "1fr 1fr 1fr", margin: 0 }}>
-                  <div className="input"><label>Vencimiento</label><input type="text" placeholder="MM/AA" value={form.cardExpiry} onChange={set("cardExpiry")} /></div>
-                  <div className="input"><label>CVC</label><input type="text" placeholder="123" value={form.cardCvc} onChange={set("cardCvc")} /></div>
+                  <div className="input"><label>Vencimiento</label><input type="text" inputMode="numeric" placeholder="MM/AA" value={form.cardExpiry} onChange={setCardExpiry} /></div>
+                  <div className="input"><label>CVC</label><input type="text" inputMode="numeric" placeholder={cardBrand?.id === "amex" ? "1234" : "123"} value={form.cardCvc} onChange={setCardCvc} /></div>
                   <div className="input"><label>Cuotas</label><select><option>1 cuota</option><option>3 cuotas</option><option>6 cuotas</option><option>12 cuotas</option></select></div>
                 </div>
               </div>

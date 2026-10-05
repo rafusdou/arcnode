@@ -230,7 +230,7 @@
   border-radius: 4px; font-weight: 700;
 }
 
-.pay-methods { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 16px; }
+.pay-methods { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 16px; }
 .pay-method {
   background: var(--bg-alt);
   border: 1.5px solid var(--border);
