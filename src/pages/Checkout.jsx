@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { ARCNODE_PLANS } from "../data/plans.js";
-import { detectCardBrand, formatCardNumber, formatExpiry, isExpiryValid, luhnCheck } from "../utils/card.js";
+import { detectCardBrand, formatCardNumber, formatExpiry, isExpiryValid, isValidLength } from "../utils/card.js";
 
 const SERVER_TYPES = [
   { value: "paper", label: "Paper (vanilla optimizado)" },
@@ -125,8 +125,8 @@ export default function Checkout() {
 
     if (pay === "card") {
       const digits = form.cardNumber.replace(/\D/g, "");
-      if (!luhnCheck(digits)) {
-        setError("El número de tarjeta no es válido.");
+      if (!isValidLength(digits, cardBrand)) {
+        setError("El número de tarjeta no tiene el largo correcto.");
         setStep("error");
         return;
       }

@@ -27,20 +27,9 @@ export function formatExpiry(value) {
   return `${digits.slice(0, 2)}/${digits.slice(2)}`;
 }
 
-export function luhnCheck(digits) {
-  if (digits.length < 12) return false;
-  let sum = 0;
-  let double = false;
-  for (let i = digits.length - 1; i >= 0; i--) {
-    let d = Number(digits[i]);
-    if (double) {
-      d *= 2;
-      if (d > 9) d -= 9;
-    }
-    sum += d;
-    double = !double;
-  }
-  return sum % 10 === 0;
+export function isValidLength(digits, brand) {
+  const expected = brand?.id === "amex" ? 15 : brand?.id === "diners" ? 14 : 16;
+  return digits.length === expected;
 }
 
 export function isExpiryValid(value) {
