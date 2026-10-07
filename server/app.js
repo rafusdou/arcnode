@@ -100,6 +100,21 @@ const ssdToMb = (ssd) => {
   return Number.isFinite(n) && n > 0 ? n * 1024 : 10 * 1024;
 };
 
+// Pterodactyl's "cpu" limit is a percentage of ONE core (100 = 1 core,
+// 200 = 2 cores). A flat 200 for every plan meant any two servers together
+// could already ask the host for more cores than a small box (a laptop, or
+// the kind of cheap VPS this is meant to start on) actually has — so this
+// scales with the plan instead: more RAM gets more CPU, but capped low
+// enough that a handful of concurrent servers can't starve each other on a
+// 2-4 core machine. Revisit the cap once there's a node with cores to spare.
+const CPU_PER_GB = 50; // 0.5 core per GB of RAM
+const CPU_MIN = 50; // half a core, even for the free plan
+const CPU_MAX = 200; // 2 cores, regardless of how big the plan is
+const cpuLimitFor = (plan) => {
+  const scaled = Math.max(plan.ram, 1) * CPU_PER_GB;
+  return Math.min(Math.max(scaled, CPU_MIN), CPU_MAX);
+};
+
 function randomSuffix() {
   return Math.random().toString(36).slice(2, 6);
 }
@@ -171,7 +186,7 @@ async function createServer({ user, plan, serverName, allocation, serverType, mi
       docker_image: egg.docker_image,
       startup: EULA_PREFIX + egg.startup,
       environment,
-      limits: { memory, swap: 0, disk, io: 500, cpu: 200 },
+      limits: { memory, swap: 0, disk, io: 500, cpu: cpuLimitFor(plan) },
       feature_limits: { databases: 0, backups: plan.backups ? 1 : 0, allocations: 1 },
       allocation: { default: allocation.id },
       start_on_completion: true,
