@@ -256,35 +256,80 @@ section[id] { scroll-margin-top: 64px; }
 .pricing-head h2 { margin: 0; }
 .pricing-head p { margin: 0; color: var(--muted); font-size: 15px; }
 
-.price-table-wrap { overflow-x: auto; }
-.price-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 15px;
-  font-variant-numeric: tabular-nums;
+.tier-tabs {
+  display: flex; flex-wrap: wrap; gap: 4px;
+  width: fit-content; max-width: 100%;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 3px;
+  margin-bottom: 40px;
 }
-.price-table th {
-  text-align: left;
-  font-size: 13px; font-weight: 600;
+.tier-tab {
+  background: none; border: none;
+  padding: 8px 14px;
+  font-size: 14px; font-weight: 600;
   color: var(--muted);
-  padding: 0 14px 12px;
-  border-bottom: 1px solid var(--border-strong);
-  white-space: nowrap;
+  border-radius: 5px;
 }
-.price-table td {
-  padding: 11px 14px;
-  border-bottom: 1px solid var(--border);
-  white-space: nowrap;
+.tier-tab:hover { color: var(--text-strong); }
+.tier-tab.active { background: var(--surface-2); color: var(--text-strong); }
+
+.tier-block + .tier-block { margin-top: 48px; }
+.tier-head {
+  display: flex; align-items: baseline; flex-wrap: wrap; gap: 4px 14px;
+  margin-bottom: 16px;
 }
-.price-table .num { text-align: right; }
-.price-table .plan-cell, .price-table .price-cell { color: var(--text-strong); font-weight: 600; }
-.price-table tbody tr:hover { background: var(--surface); }
-.price-table tr.is-selected { background: color-mix(in oklab, var(--blue) 14%, transparent); }
-.price-table tr.is-selected:hover { background: color-mix(in oklab, var(--blue) 18%, transparent); }
-.price-table tr.is-selected .plan-cell { box-shadow: inset 3px 0 0 var(--blue); }
-.action-cell { text-align: right; }
-.action-cell a { color: var(--blue); font-weight: 600; font-size: 14px; }
-.action-cell a:hover { text-decoration: underline; text-underline-offset: 3px; }
+.tier-head h3 { margin: 0; font-size: 20px; letter-spacing: -0.02em; color: var(--text-strong); }
+.tier-head span { font-size: 14px; color: var(--muted); }
+
+.plan-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+  gap: 12px;
+}
+.plan-card {
+  display: flex; flex-direction: column;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 20px;
+  transition: border-color 0.15s;
+}
+.plan-card:hover { border-color: var(--border-strong); }
+.plan-card.plan-free { border-color: var(--green); }
+.plan-card.is-selected { border-color: var(--blue); box-shadow: inset 0 0 0 1px var(--blue); }
+
+.plan-top { display: flex; justify-content: space-between; align-items: center; gap: 8px; min-height: 22px; }
+.plan-name { font-size: 14px; font-weight: 600; color: var(--muted); }
+.plan-tag {
+  font-size: 12px; font-weight: 700;
+  color: #fff;
+  background: var(--green);
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+.plan-ram {
+  margin-top: 6px;
+  font-size: 28px; font-weight: 700;
+  letter-spacing: -0.03em;
+  color: var(--text-strong);
+}
+.plan-price { display: flex; align-items: baseline; gap: 6px; margin-top: 2px; font-variant-numeric: tabular-nums; }
+.plan-price strong { font-size: 18px; font-weight: 700; color: var(--text-strong); }
+.plan-price span { font-size: 14px; color: var(--muted); }
+
+.plan-feats {
+  list-style: none;
+  margin: 16px 0 20px; padding: 16px 0 0;
+  border-top: 1px solid var(--border);
+  display: grid; gap: 8px;
+  font-size: 14px; color: var(--text);
+  flex: 1;
+}
+.plan-feats li { display: flex; align-items: center; gap: 10px; }
+.plan-feats li::before { content: ""; width: 6px; height: 6px; background: var(--green); flex-shrink: 0; }
+.plan-feats li.off { color: var(--muted-2); }
+.plan-feats li.off::before { background: var(--border-strong); }
 
 /* ---------- FAQ ---------- */
 .faq-inner { max-width: 760px; margin: 0 auto; }
@@ -346,14 +391,13 @@ section[id] { scroll-margin-top: 64px; }
   .hero { padding-top: 40px; padding-bottom: 64px; }
   .config { padding: 20px; }
   .includes-list > div { grid-template-columns: 1fr; gap: 6px; }
-  .price-table .col-disk { display: none; }
+  .plan-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+  .plan-card { padding: 16px; }
   .footer-grid { grid-template-columns: 1fr; }
 }
 @media (max-width: 560px) {
   .lang-picker, .nav .btn-primary { display: none; }
 }
-@media (max-width: 480px) {
-  .price-table .col-players { display: none; }
-  .price-table th, .price-table td { padding-left: 8px; padding-right: 8px; }
-  .price-table .plan-cell { white-space: normal; }
+@media (max-width: 420px) {
+  .plan-grid { grid-template-columns: 1fr; }
 }
