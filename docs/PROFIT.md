@@ -22,9 +22,10 @@ Comparado con el mercado (investigado en octubre 2026):
 | Apex Hosting | $3.25–3.75 |
 | BisectHosting (Premium NVMe) | $4.99 |
 
-ArcNode queda más barato que todos excepto el tier más pelado de PebbleHost
-(que ni tiene NVMe) — y ArcNode sí ofrece NVMe + DDoS protection desde los
-planes de 8GB para arriba.
+ArcNode queda más barato que todos excepto el tier más pelado de PebbleHost,
+y ningún plan pago limita la cantidad de jugadores. Lo que todavía no
+tenemos y la competencia sí: protección anti-DDoS. No se promete en la web
+hasta que esté (ver la propuesta de anti-DDoS con la VPS).
 
 ## 2. El costo: un nodo (VPS) vendido en pedacitos
 
@@ -79,7 +80,68 @@ Un cliente de 10GB usa el mismo "overhead" de sistema que uno de 2GB (un
 solo contenedor, una sola IP asignada). Mientras más clientes grandes haya
 proporcionalmente, mejor el margen real por nodo.
 
-## 4. Lo que todavía no está en esta cuenta (hay que restarlo)
+## 4. Agregados: margen extra sobre cada plan
+
+Además del plan base, el cliente puede sumar agregados en el checkout. Suben
+lo que paga cada cliente y dejan más margen que la RAM, porque casi todos
+cuestan disco o configuración, no RAM, que es lo más caro de un nodo.
+
+**Regla:** solo se ofrece un agregado si ya se puede entregar, sea
+automáticamente o con un proceso manual claro. No se vende nada que todavía
+no existe.
+
+### Se pueden hacer ya
+
+Pterodactyl ya soporta todos estos. Solo falta sumarlos al checkout y al
+backend.
+
+| Agregado | Para qué lo quiere el cliente | Cómo se entrega | Precio sugerido | Qué nos cuesta |
+|---|---|---|---|---|
+| Disco extra | Mundos grandes, muchos plugins | `limits.disk` + 10 GB por unidad al crear el server | $0,50/mes cada 10 GB | Disco, que es barato |
+| Backups extra | Más copias guardadas a la vez | `feature_limits.backups` + 2 por unidad | $0,50/mes cada 2 | Disco |
+| Base de datos MySQL | Plugins como LuckPerms, CoreProtect o Plan | `feature_limits.databases = 1`. Hay que dar de alta una vez un *Database Host* en el panel (puede ser el MariaDB que ya corre, accesible desde los servidores) | $1/mes | Casi nada |
+| Puerto adicional | Mapa web (BlueMap, Dynmap), Simple Voice Chat, Geyser | `feature_limits.allocations` + 1; el cliente lo asigna desde *Network* en el panel | $0,50/mes por puerto | Nada (el puerto tiene que estar abierto en el nodo) |
+| Más CPU | Granjas grandes o muchos jugadores en un plan chico | `limits.cpu` por encima de lo que da el plan, con un tope según los núcleos del nodo | $1/mes cada medio núcleo | CPU del nodo: es lo más limitado, no sobrevender |
+| Instalación de modpack | El cliente no quiere hacerlo solo | Servicio manual por ticket | $2 a $3, pago único | Nuestro tiempo, unos 30 minutos |
+
+Los precios son sugerencias para arrancar; se ajustan cuando haya datos de
+cuánto se piden.
+
+### Se pueden hacer más adelante
+
+Estos no se ofrecen hasta resolver lo que les falta.
+
+| Agregado | Qué falta |
+|---|---|
+| Subdominio (`tuserver.arcnode.cc`) | Pasar el dominio a Cloudflare. Después el backend crea un registro SRV por API apuntando a la IP y el puerto del server |
+| IP dedicada | Una VPS con IPs extra, que el proveedor cobra aparte. Hoy todo sale de una sola IP |
+| Anti-DDoS reforzado | Primero tiene que existir la protección base (proveedor con mitigación + TCPShield) |
+| Backups fuera del nodo | Un almacenamiento externo compatible con S3. Pterodactyl ya sabe guardar backups ahí |
+
+### Cómo entran en el checkout
+
+- Una sección **Agregados** debajo de "Datos del servidor", con un
+  selector de cantidad por agregado y el precio al lado.
+- Cada agregado aparece como una línea propia en el resumen y suma al total.
+- Hay que decidir si los descuentos trimestral y anual también se aplican a
+  los agregados.
+- La lista de agregados y sus precios vive en un solo archivo (como
+  `src/data/plans.js`), así la web y el backend usan los mismos números.
+- El backend valida los agregados que recibe y los suma a los límites al
+  crear el servidor (`limits.disk`, `limits.cpu`, `feature_limits.*`).
+- El plan gratis no tiene agregados: si alguien quiere más, el camino es
+  pasar a un plan pago.
+
+### Ejemplo de cómo cambia el margen
+
+Un cliente de 4 GB paga $7,20. Si suma una base de datos ($1) y 10 GB de
+disco ($0,50), paga $8,70: un 20% más, y esos $1,50 casi no usan recursos
+del nodo. En el nodo de ejemplo del punto 2 (3 clientes de 2 GB, $10,80),
+con que la mitad sume un agregado de $1, el nodo factura alrededor de un 14%
+más sin ocupar más RAM. Eso puede ser justo la diferencia entre empatar y
+ganar con un solo nodo.
+
+## 5. Lo que todavía no está en esta cuenta (hay que restarlo)
 
 - **Comisión de Mercado Pago**: cuando se conecte el pago real, se pierde
   un 5-7% + IVA de cada cobro. Hay que descontarlo del ingreso bruto antes
@@ -91,7 +153,7 @@ proporcionalmente, mejor el margen real por nodo.
   que deberían estar repartidos entre todos — por eso los límites de CPU
   por plan ya están puestos desde el código, no son opcionales.
 
-## 5. Resumen en una frase
+## 6. Resumen en una frase
 
 **El negocio no gana plata por vender un GB a la vez — gana plata cuando un
 nodo completo está bien ocupado con una mezcla sana de clientes y los

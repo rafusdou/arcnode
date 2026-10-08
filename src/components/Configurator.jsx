@@ -32,10 +32,10 @@ export default function Configurator({ ram, onRamChange }) {
 
       <dl className="config-specs">
         <div><dt>{t.config.plan}</dt><dd>{plan.name}</dd></div>
-        <div><dt>{t.config.players}</dt><dd>{t.config.playersValue(plan.players)}</dd></div>
+        <div><dt>{t.config.players}</dt><dd>{t.config.playersValue}</dd></div>
         <div><dt>{t.config.disk}</dt><dd>{parseInt(plan.ssd, 10)} GB</dd></div>
       </dl>
-      <p className="config-note">{t.config.playersNote}</p>
+      <p className="config-note">{t.config.playersNote(plan.players)}</p>
 
       <div className="config-total">
         <span className="config-total-label">{t.config.total}</span>

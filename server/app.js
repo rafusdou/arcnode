@@ -90,6 +90,16 @@ async function pterodactylClient(path, options = {}) {
 // (fairly different) startup logic.
 const EULA_PREFIX = '$([ -f eula.txt ] || echo "eula=true" > eula.txt) ';
 
+// Minecraft defaults to max-players=20. Paid plans have no player cap, so the
+// key is set high on first boot — only when missing, so an owner who wants a
+// cap can still lower it in server.properties. The free plan's cap is
+// rewritten on every boot instead, so editing the file doesn't lift it.
+const UNLIMITED_PLAYERS = 1000;
+const playersPrefix = (plan) =>
+  plan.free
+    ? `$(sed -i "/^max-players=/d" server.properties 2>/dev/null; echo "max-players=${plan.players}" >> server.properties) `
+    : `$(grep -q "^max-players=" server.properties 2>/dev/null || echo "max-players=${UNLIMITED_PLAYERS}" >> server.properties) `;
+
 async function getEgg(eggId) {
   const res = await pterodactyl(`/api/application/nests/${NEST_ID}/eggs/${eggId}?include=variables`);
   return res.attributes;
@@ -195,7 +205,7 @@ async function createServer({ user, plan, serverName, allocation, serverType, mi
       egg: type.eggId,
       nest: NEST_ID,
       docker_image: egg.docker_image,
-      startup: EULA_PREFIX + egg.startup,
+      startup: playersPrefix(plan) + EULA_PREFIX + egg.startup,
       environment,
       limits: { memory, swap: 0, disk, io: 500, cpu: cpuLimitFor(plan) },
       feature_limits: { databases: 0, backups: plan.backups ? 1 : 0, allocations: 1 },

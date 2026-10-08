@@ -41,7 +41,7 @@ del juego.
 | Disco | 2 GB | `plan.ssd = "2 GB"` → `ssdToMb` | Ya está |
 | Backups | 0 | `feature_limits.backups = 0` (el plan tiene `backups: false`) | Ya está |
 | Bases de datos | 0 | `feature_limits.databases = 0` | Ya está |
-| Jugadores | 3 | `max-players=3` forzado por el egg (ver 3.1) | Falta |
+| Jugadores | 3 | `playersPrefix` en `server/app.js` reescribe `max-players=3` en cada arranque, así editar el archivo no lo levanta. Los planes pagos arrancan con `max-players=1000` (sin límite) | Ya está |
 | Tipo de server | Paper o Vanilla | Forge no arranca bien con 1 GB; el checkout no lo ofrece y el backend lo rechaza | Ya está |
 | Servidores gratis por cuenta | 1 | El backend rechaza un segundo plan gratis para el mismo email | Ya está |
 | Checkout sin tarjeta | — | El checkout del plan gratis no pide medio de pago y dice "Soporte: Básico" | Ya está |
@@ -75,8 +75,9 @@ motd=§b§lArcNode.cc §r§7· §fServidor gratis\n§7Creá el tuyo en §barcnod
 **Cómo se fuerza (sin que el dueño lo pueda cambiar):** con eggs propios para
 el plan gratis. En el panel de admin, Nests → Minecraft, se clonan los eggs de
 Paper y Vanilla como "Paper (Gratis)" y "Vanilla (Gratis)". En la pestaña
-*Configuration* de cada uno, en *Configuration Files*, se agregan `motd` y
-`max-players` a lo que ya fuerza el egg:
+*Configuration* de cada uno, en *Configuration Files*, se agrega `motd` a lo
+que ya fuerza el egg (`max-players` ya lo maneja el backend, ver la tabla de
+límites; si lo ponés también acá, no pasa nada):
 
 ```json
 {
