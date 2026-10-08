@@ -11,7 +11,7 @@ const SERVER_TYPES = [
 
 const MC_VERSIONS = ["latest", "1.21.4", "1.20.4", "1.19.4", "1.18.2", "1.16.5"];
 
-function SuccessScreen({ result }) {
+function SuccessScreen({ result, isFree }) {
   const [running, setRunning] = useState(false);
   const pollRef = useRef(null);
 
@@ -38,12 +38,12 @@ function SuccessScreen({ result }) {
       <div className="checkout-card" style={{ textAlign: "center", padding: "40px 32px" }}>
         <div style={{
           width: 64, height: 64, borderRadius: "50%", margin: "0 auto 20px",
-          background: "linear-gradient(135deg, var(--blue), var(--green))",
+          background: "var(--green)",
           display: "flex", alignItems: "center", justifyContent: "center",
         }}>
           <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6L9 17l-5-5" /></svg>
         </div>
-        <h1 style={{ fontSize: 26, margin: "0 0 8px" }}>¡Pago aprobado!</h1>
+        <h1 style={{ fontSize: 26, margin: "0 0 8px" }}>{isFree ? "¡Tu servidor está en camino!" : "¡Pago aprobado!"}</h1>
         <p style={{ color: "var(--muted)", margin: "0 0 32px" }}>
           Tu servidor <strong style={{ color: "var(--text-strong)" }}>{result.server.name}</strong> ({result.server.plan} · {result.server.type} {result.server.version}) ya está siendo creado.
         </p>
@@ -84,6 +84,9 @@ export default function Checkout() {
   const [params] = useSearchParams();
   const planName = params.get("plan") || "Blaze";
   const plan = ARCNODE_PLANS.find((p) => p.name === planName) || ARCNODE_PLANS.find((p) => p.name === "Blaze");
+  const isFree = !!plan.free;
+  // Forge doesn't boot reliably on the free plan's resources, so it's not offered there.
+  const serverTypes = isFree ? SERVER_TYPES.filter((t) => t.value !== "forge") : SERVER_TYPES;
   const [cycle, setCycle] = useState("monthly");
   const [pay, setPay] = useState("card");
   const cycleMul = cycle === "monthly" ? 1 : cycle === "quarterly" ? 2.85 : 10.2;
@@ -123,7 +126,7 @@ export default function Checkout() {
       return;
     }
 
-    if (pay === "card") {
+    if (!isFree && pay === "card") {
       const digits = form.cardNumber.replace(/\D/g, "");
       if (!isValidLength(digits, cardBrand)) {
         setError("El número de tarjeta no tiene el largo correcto.");
@@ -148,12 +151,14 @@ export default function Checkout() {
     // accepted. We just walk through a believable sequence of steps while
     // the real provisioning call happens in the background.
     const typeLabel = SERVER_TYPES.find((t) => t.value === form.serverType)?.label || "servidor";
-    const steps = [
-      "Validando método de pago…",
-      "Procesando el pago…",
-      "Pago aprobado. Creando tu cuenta…",
-      `Creando tu servidor ${typeLabel}…`,
-    ];
+    const steps = isFree
+      ? ["Creando tu cuenta…", `Creando tu servidor ${typeLabel}…`]
+      : [
+          "Validando método de pago…",
+          "Procesando el pago…",
+          "Pago aprobado. Creando tu cuenta…",
+          `Creando tu servidor ${typeLabel}…`,
+        ];
     let i = 0;
     setProcessingLabel(steps[0]);
     const stepTimer = setInterval(() => {
@@ -193,7 +198,7 @@ export default function Checkout() {
   };
 
   if (step === "success" && result) {
-    return <SuccessScreen result={result} />;
+    return <SuccessScreen result={result} isFree={isFree} />;
   }
 
   if (step === "processing") {
@@ -217,7 +222,7 @@ export default function Checkout() {
         <div className="steps">
           <div className="step active"><span className="step-num">1</span> Plan</div>
           <div className="step active"><span className="step-num">2</span> Configurar</div>
-          <div className="step active"><span className="step-num">3</span> Pago</div>
+          {!isFree && <div className="step active"><span className="step-num">3</span> Pago</div>}
         </div>
       </div>
       <form className="checkout-grid" onSubmit={handleSubmit}>
@@ -234,7 +239,7 @@ export default function Checkout() {
               <div className="input"><label>Nombre del servidor</label><input type="text" placeholder="MiServerEpico" value={form.serverName} onChange={set("serverName")} /></div>
               <div className="input"><label>Tipo de servidor</label>
                 <select value={form.serverType} onChange={set("serverType")}>
-                  {SERVER_TYPES.map((t) => <option key={t.value} value={t.value}>{t.label}</option>)}
+                  {serverTypes.map((t) => <option key={t.value} value={t.value}>{t.label}</option>)}
                 </select>
               </div>
               <div className="input"><label>Versión de Minecraft</label>
@@ -264,14 +269,16 @@ export default function Checkout() {
             </div>
           </div>
 
-          <div className="checkout-card">
+          {!isFree && <div className="checkout-card">
             <h3>Método de pago</h3>
             <div className="pay-methods">
-              {[["card", "💳", "Tarjeta"], ["mp", "🇦🇷", "MercadoPago"]].map(([k, ic, l]) => (
-                <div key={k} className={"pay-method " + (pay === k ? "active" : "")} onClick={() => setPay(k)}>
-                  <span className="pay-method-icon">{ic}</span>{l}
-                </div>
-              ))}
+              <button type="button" className={"pay-method " + (pay === "card" ? "active" : "")} onClick={() => setPay("card")}>
+                Tarjeta
+              </button>
+              <button type="button" className="pay-method" disabled>
+                Mercado Pago
+                <span className="pay-method-soon">Próximamente</span>
+              </button>
             </div>
             {pay === "card" && (
               <div className="input-row">
@@ -299,41 +306,41 @@ export default function Checkout() {
                 </div>
               </div>
             )}
-            {pay !== "card" && (
-              <p style={{ fontSize: 13, color: "var(--muted)", margin: 0 }}>
-                Te vamos a redirigir para completar el pago después de confirmar.
-              </p>
-            )}
-          </div>
+          </div>}
         </div>
 
         <aside>
           <div className="summary">
             <h3>Tu pedido</h3>
-            <div className="cycle-toggle">
-              {[["monthly", "Mensual"], ["quarterly", "Trimestral"], ["yearly", "Anual"]].map(([k, l]) => (
-                <button key={k} type="button" className={cycle === k ? "active" : ""} onClick={() => setCycle(k)}>
-                  {l}
-                  {k === "quarterly" && <span className="cycle-save">-5%</span>}
-                  {k === "yearly" && <span className="cycle-save">-15%</span>}
-                </button>
-              ))}
-            </div>
-            <div className="summary-line"><span>Plan</span><strong>{plan.name}</strong></div>
-            <div className="summary-line"><span>RAM</span><strong>{plan.free ? "—" : `${plan.ram} GB`}</strong></div>
+            {!isFree && (
+              <div className="cycle-toggle">
+                {[["monthly", "Mensual"], ["quarterly", "Trimestral"], ["yearly", "Anual"]].map(([k, l]) => (
+                  <button key={k} type="button" className={cycle === k ? "active" : ""} onClick={() => setCycle(k)}>
+                    {l}
+                    {k === "quarterly" && <span className="cycle-save">-5%</span>}
+                    {k === "yearly" && <span className="cycle-save">-15%</span>}
+                  </button>
+                ))}
+              </div>
+            )}
+            <div className="summary-line"><span>Plan</span><strong>{isFree ? `${plan.name} (gratis)` : plan.name}</strong></div>
+            {!isFree && <div className="summary-line"><span>RAM</span><strong>{plan.ram} GB</strong></div>}
             <div className="summary-line"><span>Almacenamiento</span><strong>{plan.ssd}</strong></div>
             <div className="summary-line"><span>Jugadores</span><strong>hasta {plan.players}</strong></div>
             <div className="summary-line"><span>Tipo</span><strong>{SERVER_TYPES.find((t) => t.value === form.serverType)?.label}</strong></div>
-            {cycle !== "monthly" && (
+            <div className="summary-line"><span>Soporte</span><strong>{isFree ? "Básico" : "Por Discord"}</strong></div>
+            {!isFree && cycle !== "monthly" && (
               <div className="summary-line"><span>Descuento</span><strong style={{ color: "var(--green)" }}>{cycle === "yearly" ? "-15%" : "-5%"}</strong></div>
             )}
             <div className="summary-total">
-              <span>Total {cycleLabel}</span>
-              <strong>{fmt(total)}</strong>
+              <span>{isFree ? "Total" : `Total ${cycleLabel}`}</span>
+              <strong>{isFree ? "Gratis" : fmt(total)}</strong>
             </div>
-            <button type="submit" className="btn btn-primary btn-block" style={{ marginTop: 16 }}>Confirmar y pagar</button>
+            <button type="submit" className="btn btn-primary btn-block" style={{ marginTop: 16 }}>
+              {isFree ? "Crear servidor gratis" : "Confirmar y pagar"}
+            </button>
             <p style={{ fontSize: 11, color: "var(--muted)", marginTop: 12, textAlign: "center" }}>
-              Garantía de devolución de 14 días. Cancelás cuando quieras.
+              {isFree ? "No necesitás tarjeta." : "Garantía de devolución de 14 días. Cancelás cuando quieras."}
             </p>
           </div>
         </aside>

@@ -1,19 +1,17 @@
 const FOOTER_COLS_ES = [
   { h: "Producto", links: [
-    { l: "Planes Minecraft", to: "/planes-minecraft" },
-    { l: "Servidores VPS", to: "/vps" },
-    { l: "Modpacks a pedido", to: "/modpacks" },
-    { l: "Panel demo", to: "/panel-demo" },
+    { l: "Planes", to: "/planes-minecraft" },
+    { l: "Modpacks", to: "/modpacks" },
+    { l: "Cómo es el panel", to: "/panel-demo" },
   ] },
-  { h: "Recursos", links: [
+  { h: "Ayuda", links: [
     { l: "Documentación", to: "/docs" },
-    { l: "Tutoriales", to: "/tutoriales" },
-    { l: "Estado de red", to: "/status" },
     { l: "Migrar de otro host", to: "/migrar" },
+    { l: "Estado del servicio", to: "/status" },
   ] },
   { h: "Empresa", links: [
     { l: "Sobre nosotros", to: "/about" },
-    { l: "Afiliados", to: "/afiliados" },
+    { l: "Referidos", to: "/afiliados" },
     { l: "Términos", to: "/terminos" },
     { l: "Privacidad", to: "/privacidad" },
   ] },
@@ -21,20 +19,18 @@ const FOOTER_COLS_ES = [
 
 const FOOTER_COLS_EN = [
   { h: "Product", links: [
-    { l: "Minecraft plans", to: "/planes-minecraft" },
-    { l: "VPS servers", to: "/vps" },
-    { l: "Modpacks on request", to: "/modpacks" },
-    { l: "Panel demo", to: "/panel-demo" },
+    { l: "Plans", to: "/planes-minecraft" },
+    { l: "Modpacks", to: "/modpacks" },
+    { l: "What the panel looks like", to: "/panel-demo" },
   ] },
-  { h: "Resources", links: [
+  { h: "Help", links: [
     { l: "Documentation", to: "/docs" },
-    { l: "Tutorials", to: "/tutoriales" },
-    { l: "Network status", to: "/status" },
     { l: "Migrate from another host", to: "/migrar" },
+    { l: "Service status", to: "/status" },
   ] },
   { h: "Company", links: [
     { l: "About us", to: "/about" },
-    { l: "Affiliates", to: "/afiliados" },
+    { l: "Referrals", to: "/afiliados" },
     { l: "Terms", to: "/terminos" },
     { l: "Privacy", to: "/privacidad" },
   ] },

@@ -119,6 +119,16 @@ function randomSuffix() {
   return Math.random().toString(36).slice(2, 6);
 }
 
+// Stored as the server's description so free-plan servers can be told apart
+// later (one-per-user check here, ad/inactivity worker in docs/PLAN-GRATIS.md).
+const planDescription = (plan) => `ArcNode plan: ${plan.name}`;
+
+async function userHasFreeServer(userId, freePlan) {
+  const res = await pterodactyl(`/api/application/users/${userId}?include=servers`);
+  const servers = res.attributes.relationships?.servers?.data || [];
+  return servers.some((s) => s.attributes.description === planDescription(freePlan));
+}
+
 async function findUserByEmail(email) {
   const res = await pterodactyl(`/api/application/users?filter[email]=${encodeURIComponent(email)}`);
   return res.data?.[0]?.attributes || null;
@@ -180,6 +190,7 @@ async function createServer({ user, plan, serverName, allocation, serverType, mi
     method: "POST",
     body: JSON.stringify({
       name: serverName || `${plan.name} — ${user.username}`,
+      description: planDescription(plan),
       user: user.id,
       egg: type.eggId,
       nest: NEST_ID,
@@ -221,7 +232,14 @@ app.post("/api/checkout", async (req, res) => {
 
     const plan = ARCNODE_PLANS.find((p) => p.name === planName) || ARCNODE_PLANS.find((p) => p.name === "Blaze");
 
+    if (plan.free && serverType === "forge") {
+      return res.status(400).json({ success: false, error: "El plan gratis es solo para Paper o Vanilla." });
+    }
+
     let user = await findUserByEmail(email);
+    if (user && plan.free && (await userHasFreeServer(user.id, plan))) {
+      return res.status(400).json({ success: false, error: "Ya tenés un servidor gratis con este email." });
+    }
     if (!user) {
       user = await createUser({ email, firstName, lastName, password });
     }
@@ -253,6 +271,20 @@ app.post("/api/checkout", async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ success: false, error: "No se pudo aprovisionar el servidor. Intentá de nuevo en unos segundos." });
+  }
+});
+
+app.get("/api/status", async (req, res) => {
+  res.set("Cache-Control", "no-store");
+  const checkedAt = new Date().toISOString();
+  if (!PTERODACTYL_URL || !PTERODACTYL_API_KEY) {
+    return res.json({ panel: "down", checkedAt });
+  }
+  try {
+    await pterodactyl("/api/application/nodes?per_page=1", { signal: AbortSignal.timeout(5000) });
+    res.json({ panel: "up", checkedAt });
+  } catch {
+    res.json({ panel: "down", checkedAt });
   }
 });
 

@@ -1,52 +1,57 @@
 import { useState } from "react";
 import PageHeader from "../components/PageHeader.jsx";
 
+const TABS = ["Console", "Files", "Databases", "Schedules", "Users", "Backups", "Network", "Startup", "Settings", "Activity"];
+
+const BOOT_LOG = [
+  "[12:01:02 INFO]: Starting minecraft server version 1.21.4",
+  "[12:01:02 INFO]: Loading properties",
+  "[12:01:03 INFO]: Default game type: SURVIVAL",
+  '[12:01:05 INFO]: Preparing level "world"',
+  "[12:01:09 INFO]: Preparing spawn area: 100%",
+  '[12:01:11 INFO]: Done (8.412s)! For help, type "help"',
+  "[12:03:40 INFO]: Steve joined the game",
+];
+
 export default function PanelDemo() {
-  const [tab, setTab] = useState("Consola");
+  const [lines, setLines] = useState(BOOT_LOG);
+  const [command, setCommand] = useState("");
+
+  const send = (e) => {
+    e.preventDefault();
+    if (!command.trim()) return;
+    setLines((l) => [...l, `> ${command.trim()}`]);
+    setCommand("");
+  };
+
   return (
     <>
       <PageHeader
-        eyebrow="Panel Pterodactyl"
-        title="El panel de control más completo del mercado."
-        sub="Consola en vivo, file manager, schedulers, SFTP, backups, sub-usuarios. Probalo sin registrarte."
+        eyebrow="Panel"
+        title="Así se ve el panel"
+        sub="Es Pterodactyl con los colores de ArcNode. Está en inglés. Esto es una vista de ejemplo: la consola de abajo no está conectada a ningún servidor."
       />
       <div className="page-section">
         <div className="demo-frame">
           <aside className="demo-side">
-            <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "0 8px 12px", borderBottom: "1px solid var(--border)" }}>
-              <span className="dot" style={{ background: "var(--green)" }} />
-              <strong style={{ color: "var(--text)", fontSize: 14 }}>survival.arcnode.cc</strong>
-            </div>
-            <div className="demo-side-h">Server</div>
-            {["Consola", "Archivos", "Bases de datos", "Schedulers", "Backups", "Red", "Sub-usuarios"].map((n) => (
-              <div key={n} className={"demo-nav-item " + (tab === n ? "active" : "")} onClick={() => setTab(n)}>{n}</div>
+            {TABS.map((n) => (
+              <div key={n} className={"demo-nav-item " + (n === "Console" ? "active" : "")}>{n}</div>
             ))}
-            <div className="demo-side-h">Cuenta</div>
-            <div className="demo-nav-item">Facturación</div>
-            <div className="demo-nav-item">Tickets</div>
           </aside>
           <div className="demo-main">
             <div className="demo-stats">
-              <div className="demo-stat"><div className="demo-stat-label">CPU</div><div className="demo-stat-val">14%</div><div className="demo-stat-delta">↓ 2%</div></div>
-              <div className="demo-stat"><div className="demo-stat-label">RAM</div><div className="demo-stat-val">4.2 GB</div><div className="demo-stat-delta">de 12 GB</div></div>
-              <div className="demo-stat"><div className="demo-stat-label">TPS</div><div className="demo-stat-val">20.0</div><div className="demo-stat-delta">óptimo</div></div>
-              <div className="demo-stat"><div className="demo-stat-label">Players</div><div className="demo-stat-val">3 / 150</div><div className="demo-stat-delta">en línea</div></div>
+              <div className="demo-stat"><div className="demo-stat-label">Address</div><div className="demo-stat-val mono">203.0.113.24:25567</div></div>
+              <div className="demo-stat"><div className="demo-stat-label">Uptime</div><div className="demo-stat-val">2h 14m</div></div>
+              <div className="demo-stat"><div className="demo-stat-label">CPU</div><div className="demo-stat-val">14%</div></div>
+              <div className="demo-stat"><div className="demo-stat-label">Memory</div><div className="demo-stat-val">1.2 / 2 GiB</div></div>
             </div>
-            <div style={{ background: "var(--bg-alt)", border: "1px solid var(--border)", borderRadius: 10, padding: 16, fontFamily: "var(--font-mono)", fontSize: 12, lineHeight: 1.7, height: 280, overflowY: "auto" }}>
-              <div style={{ color: "#5DCAA5" }}>[Server] Done (2.847s)! For help, type "help"</div>
-              <div style={{ color: "#94a3b8" }}>[16:42:14] Steve_BA joined the game</div>
-              <div style={{ color: "#94a3b8" }}>[16:42:29] MaxiCrafter joined the game</div>
-              <div style={{ color: "#378ADD" }}>[Tickets] TPS: 20.0  RAM: 4.2/12GB  CPU: 14%</div>
-              <div style={{ color: "#94a3b8" }}>[16:42:47] Lucia_99 joined the game</div>
-              <div style={{ color: "#1D9E75" }}>[Backup] Snapshot creado · 1.4 GB · backup-2026-05-03.tar</div>
-              <div style={{ color: "#94a3b8" }}>[16:43:15] &lt;Steve_BA&gt; vamo a la cueva</div>
-              <div style={{ color: "#94a3b8" }}>[16:43:22] &lt;Lucia_99&gt; voy</div>
-              <div style={{ color: "#5DCAA5" }}>_</div>
+            <div className="demo-console">
+              {lines.map((l, i) => <div key={i}>{l}</div>)}
             </div>
-            <div style={{ marginTop: 12, display: "flex", gap: 8 }}>
-              <input type="text" placeholder="Comando o mensaje..." style={{ flex: 1, background: "var(--surface)", border: "1px solid var(--border-strong)", borderRadius: 8, padding: 10, color: "var(--text)", fontFamily: "var(--font-mono)", fontSize: 12 }} />
-              <button className="btn btn-primary">Enviar</button>
-            </div>
+            <form className="demo-input" onSubmit={send}>
+              <input type="text" value={command} onChange={(e) => setCommand(e.target.value)} placeholder="Type a command..." aria-label="Comando" />
+              <button type="submit" className="btn btn-primary">Enviar</button>
+            </form>
           </div>
         </div>
       </div>

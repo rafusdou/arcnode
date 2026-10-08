@@ -1,51 +1,58 @@
-import { useMemo } from "react";
+import { useEffect, useState } from "react";
 import PageHeader from "../components/PageHeader.jsx";
 
-const SERVICES = [
-  { n: "Panel Pterodactyl", up: 100 },
-  { n: "API ArcNode", up: 100 },
-  { n: "Red Buenos Aires (BA-1)", up: 100 },
-  { n: "Red Buenos Aires (BA-2)", up: 99 },
-  { n: "DNS y subdominios", up: 100 },
-  { n: "Backups automáticos", up: 100 },
-  { n: "MercadoPago / pagos", up: 98 },
-  { n: "Discord soporte", up: 100 },
-];
+const LABELS = {
+  up: "Funcionando",
+  down: "No responde",
+  checking: "Comprobando…",
+};
 
-function StatusRow({ s }) {
-  const bars = useMemo(() => Array.from({ length: 60 }, () => Math.random()), []);
+function Row({ name, detail, state }) {
   return (
     <div className="status-row">
+      <span className={"status-dot status-" + state} />
       <div className="status-row-name">
-        <span className="status-pulse" style={{ background: s.up >= 99 ? "var(--green)" : "var(--amber)", boxShadow: "none", width: 8, height: 8 }} />
-        {s.n}
+        {name}
+        <span>{detail}</span>
       </div>
-      <div className="status-bars">
-        {bars.map((r, j) => {
-          const cls = s.up < 99 && r > 0.96 ? "warn" : s.up < 95 && r > 0.92 ? "down" : "";
-          return <div key={j} className={"status-bar " + cls} />;
-        })}
-      </div>
-      <div style={{ fontSize: 13, color: "var(--muted)", marginLeft: 16, fontVariantNumeric: "tabular-nums" }}>{s.up}%</div>
+      <div className={"status-state status-" + state}>{LABELS[state]}</div>
     </div>
   );
 }
 
 export default function Status() {
+  const [panel, setPanel] = useState("checking");
+  const [checkedAt, setCheckedAt] = useState(null);
+
+  useEffect(() => {
+    fetch("/api/status")
+      .then((r) => r.json())
+      .then((d) => {
+        setPanel(d.panel === "up" ? "up" : "down");
+        setCheckedAt(new Date(d.checkedAt));
+      })
+      .catch(() => {
+        setPanel("down");
+        setCheckedAt(new Date());
+      });
+  }, []);
+
   return (
     <>
-      <PageHeader eyebrow="Estado de red" title="Estado de los sistemas." sub="Actualizado en vivo cada 60 segundos." />
+      <PageHeader
+        eyebrow="Estado"
+        title="Estado del servicio"
+        sub="Se comprueba en el momento en que abrís esta página."
+      />
       <div className="page-section">
-        <div className="status-overall">
-          <div className="status-pulse" />
-          <div>
-            <strong>Todos los sistemas operativos.</strong>
-            <div><span>Sin incidentes en las últimas 24 horas.</span></div>
-          </div>
-        </div>
         <div className="status-list">
-          {SERVICES.map((s, i) => <StatusRow s={s} key={i} />)}
+          <Row name="Sitio web" detail="arcnode.cc y el checkout" state="up" />
+          <Row name="Panel y creación de servidores" detail="Panel de control y API de aprovisionamiento" state={panel} />
         </div>
+        <p className="status-foot">
+          {checkedAt && <>Última comprobación: {checkedAt.toLocaleTimeString("es-AR", { hour: "2-digit", minute: "2-digit", hour12: false })}. </>}
+          Si tu servidor no anda y acá figura todo funcionando, abrí un ticket en nuestro Discord.
+        </p>
       </div>
     </>
   );

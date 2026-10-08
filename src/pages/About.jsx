@@ -3,21 +3,31 @@ import PageHeader from "../components/PageHeader.jsx";
 export default function About() {
   return (
     <>
-      <PageHeader eyebrow="Sobre ArcNode" title="Hosting hecho por gente que juega." sub="Empezamos en 2026 desde Buenos Aires porque estábamos cansados de pagar el doble por lag europeo." />
+      <PageHeader
+        eyebrow="Sobre ArcNode"
+        title="Somos dos personas haciendo hosting de Minecraft."
+        sub="ArcNode arrancó en 2026, en Argentina."
+      />
       <div className="page-section">
-        <div className="about-stats">
-          <div className="about-stat"><div className="about-stat-val">12.847</div><div className="about-stat-label">servidores activos</div></div>
-          <div className="about-stat"><div className="about-stat-val">{"<"}30ms</div><div className="about-stat-label">latencia LATAM</div></div>
-          <div className="about-stat"><div className="about-stat-val">99.9%</div><div className="about-stat-label">uptime real</div></div>
-          <div className="about-stat"><div className="about-stat-val">2026</div><div className="about-stat-label">desde</div></div>
-        </div>
-        <div className="legal-content" style={{ maxWidth: 760 }}>
-          <h2>Nuestra historia</h2>
-          <p>Somos un equipo chico en Buenos Aires. Arrancamos por un servidor propio que laggeaba con 10 jugadores en un hosting europeo. Cuando vimos que ningún hosting argentino tenía hardware decente ni precios claros, decidimos hacerlo nosotros: $1,80 USD por GB, sin letra chica.</p>
-          <h2>Hardware</h2>
-          <p>Todos nuestros nodos corren Ryzen 9 7950X con NVMe Gen4 en RAID. Anti-DDoS a 1.5 Tbps en todos los planes pagos.</p>
-          <h2>Compromiso</h2>
-          <p>Soporte humano por Discord, onboarding personalizado en las primeras 24hs, y backups que testeamos mensualmente para confirmar que restauran de verdad. Garantía de devolución de 14 días sin preguntas.</p>
+        <div className="legal-content">
+          <h2>Por qué lo hacemos</h2>
+          <p>
+            Queríamos un hosting donde el precio fuera una cuenta simple: cuántos GB de RAM querés y
+            cuánto sale cada uno. El GB cuesta lo mismo en el plan más chico que en el más grande, así
+            que no hay que comparar planes para saber cuál conviene.
+          </p>
+          <h2>Cómo funciona por dentro</h2>
+          <p>
+            El panel es Pterodactyl, un proyecto open source muy usado en el rubro, con nuestros colores.
+            Cada servidor corre aislado en su propio contenedor, con la RAM, el disco y la CPU de su plan.
+            Cuando terminás la compra, el sistema crea tu cuenta y tu servidor solo, sin que tengamos
+            que intervenir.
+          </p>
+          <h2>Cómo te atendemos</h2>
+          <p>
+            Estamos empezando, así que el soporte lo damos nosotros mismos, por Discord. Abrís un ticket,
+            elegís de qué se trata y te contesta uno de los dos.
+          </p>
         </div>
       </div>
     </>
