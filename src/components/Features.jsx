@@ -1,25 +1,22 @@
 import { useApp } from "../context/AppContext.jsx";
-import Icon from "./Icon.jsx";
-
-const FEATURE_ICONS = ["cpu", "shield", "save", "package", "globe", "terminal", "zap", "users"];
 
 export default function Features() {
   const { t } = useApp();
   return (
-    <section className="features" id="features">
-      <div className="section-head">
-        <div className="eyebrow"><span className="dot" /> {t.features.eyebrow}</div>
-        <h2>{t.features.title}</h2>
-        <p>{t.features.sub}</p>
-      </div>
-      <div className="features-grid">
-        {t.features.items.map((f, i) => (
-          <div className="feature-card" key={i}>
-            <div className="feature-icon"><Icon name={FEATURE_ICONS[i]} size={20} /></div>
-            <h3>{f.title}</h3>
-            <p>{f.body}</p>
-          </div>
-        ))}
+    <section className="includes" id="features">
+      <div className="includes-inner">
+        <div className="includes-intro">
+          <h2>{t.includes.title}</h2>
+          <p>{t.includes.intro}</p>
+        </div>
+        <dl className="includes-list">
+          {t.includes.items.map((it) => (
+            <div key={it.t}>
+              <dt>{it.t}</dt>
+              <dd>{it.d}</dd>
+            </div>
+          ))}
+        </dl>
       </div>
     </section>
   );

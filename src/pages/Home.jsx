@@ -1,17 +1,17 @@
+import { useState } from "react";
 import Hero from "../components/Hero.jsx";
 import Features from "../components/Features.jsx";
-import Calculator from "../components/Calculator.jsx";
 import Plans from "../components/Plans.jsx";
-import Testimonials from "../components/Testimonials.jsx";
+import Faq from "../components/Faq.jsx";
 
 export default function Home() {
+  const [ram, setRam] = useState(4);
   return (
     <>
-      <Hero />
+      <Hero ram={ram} onRamChange={setRam} />
       <Features />
-      <Calculator />
-      <Plans />
-      <Testimonials />
+      <Plans selectedRam={ram} />
+      <Faq />
     </>
   );
 }

@@ -9,16 +9,10 @@ export default function Footer() {
       <div className="footer-grid">
         <div className="footer-brand">
           <Logo />
-          <div className="footer-tagline">{t.footer.tagline}</div>
           <p>{t.footer.blurb}</p>
-          <div className="socials">
-            {["discord", "twitter", "github", "youtube"].map((s) => (
-              <a key={s} className="social" href="#" aria-label={s}>{s[0].toUpperCase()}</a>
-            ))}
-          </div>
         </div>
-        {t.footer.cols.map((c, i) => (
-          <div key={i}>
+        {t.footer.cols.map((c) => (
+          <div key={c.h}>
             <h4>{c.h}</h4>
             {c.links.map((link) => <Link key={link.to} to={link.to}>{link.l}</Link>)}
           </div>

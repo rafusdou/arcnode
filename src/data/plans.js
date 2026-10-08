@@ -4,7 +4,8 @@
 // thresholds live in one place instead of 25 hardcoded objects.
 
 const USD_TO_ARS = 1500;
-const PRICE_PER_GB = 1.8;
+export const PRICE_PER_GB = 1.8;
+export const PRICE_PER_GB_ARS = PRICE_PER_GB * USD_TO_ARS;
 
 const PLAN_NAMES = [
   "Madera", "Piedra Arenisca", "Hierro", "Oro", "Diamante",
@@ -52,13 +53,13 @@ PLAN_NAMES.forEach((name, i) => {
   const players = PLAYERS[i];
   const tier = tierFor(ram);
   const isFirstOfTier = ram === tier.from;
-  const price = ram * PRICE_PER_GB;
+  const price = Math.round(ram * PRICE_PER_GB * 100) / 100;
 
   plans.push({
     ...(isFirstOfTier ? { tier: tier.name, tierDesc: tier.desc } : {}),
     name, ram, price,
-    priceARS: price * USD_TO_ARS,
-    pgb: PRICE_PER_GB, pgbARS: PRICE_PER_GB * USD_TO_ARS,
+    priceARS: Math.round(price * USD_TO_ARS),
+    pgb: PRICE_PER_GB, pgbARS: PRICE_PER_GB_ARS,
     players,
     ssd: ram >= 8 ? `${players} GB NVMe` : `${players} GB`,
     modpacks: ram >= 6 ? "a pedido" : false,

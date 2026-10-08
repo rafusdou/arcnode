@@ -9,11 +9,6 @@
   background: var(--bg-alt);
   overflow: hidden;
 }
-.page-header::before {
-  content: ""; position: absolute; inset: 0;
-  background: radial-gradient(ellipse 80% 60% at 30% 0%, rgba(55,138,221,0.18), transparent 60%);
-  pointer-events: none;
-}
 .page-header-inner { position: relative; max-width: 1100px; margin: 0 auto; }
 .page-header h1 {
   font-size: clamp(36px, 4vw, 52px);
@@ -35,17 +30,11 @@
 }
 .auth-side {
   position: relative;
-  background: linear-gradient(160deg, var(--bg-alt), var(--bg));
+  background: var(--bg-alt);
   padding: 64px 56px;
   display: flex; flex-direction: column; justify-content: space-between;
   border-right: 1px solid var(--border);
   overflow: hidden;
-}
-.auth-side::before {
-  content: ""; position: absolute; inset: 0;
-  background: radial-gradient(ellipse 60% 40% at 20% 30%, rgba(55,138,221,0.25), transparent 60%),
-              radial-gradient(ellipse 50% 40% at 80% 70%, rgba(29,158,117,0.18), transparent 60%);
-  pointer-events: none;
 }
 .auth-side-content { position: relative; max-width: 460px; }
 .auth-side h2 {
@@ -148,7 +137,7 @@
   border: 1px solid var(--border);
 }
 .step.active {
-  background: linear-gradient(135deg, rgba(55,138,221,0.15), rgba(29,158,117,0.1));
+  background: color-mix(in oklab, var(--blue) 12%, transparent);
   border-color: var(--blue);
   color: var(--text);
 }
@@ -302,7 +291,7 @@
 .modpack-card:hover { border-color: var(--border-strong); transform: translateY(-2px); }
 .modpack-cover {
   height: 100px;
-  background: linear-gradient(135deg, var(--blue), var(--green));
+  background: var(--blue);
   display: flex; align-items: center; justify-content: center;
   font-family: var(--font-display);
   font-size: 26px; font-weight: 700; color: #fff;
@@ -448,7 +437,7 @@
 .tutorial-thumb {
   width: 80px; height: 56px;
   border-radius: 8px;
-  background: linear-gradient(135deg, var(--blue), var(--green));
+  background: var(--blue);
   display: flex; align-items: center; justify-content: center;
   color: #fff; font-weight: 700;
   font-family: var(--font-display);
@@ -470,7 +459,7 @@
 .migrate-num {
   width: 36px; height: 36px;
   border-radius: 50%;
-  background: linear-gradient(135deg, var(--blue), var(--green));
+  background: var(--blue);
   display: flex; align-items: center; justify-content: center;
   color: #fff; font-weight: 700; font-size: 14px;
   font-family: var(--font-display);
@@ -491,8 +480,6 @@
   font-family: var(--font-display);
   font-size: 36px; font-weight: 700; color: var(--text-strong);
   letter-spacing: -0.02em;
-  background: linear-gradient(135deg, var(--blue), var(--teal));
-  -webkit-background-clip: text; background-clip: text; color: transparent;
 }
 .about-stat-label { font-size: 13px; color: var(--muted); margin-top: 4px; }
 
@@ -513,8 +500,7 @@
 .aff-tier-pct {
   font-family: var(--font-display);
   font-size: 48px; font-weight: 700;
-  background: linear-gradient(135deg, var(--blue), var(--green));
-  -webkit-background-clip: text; background-clip: text; color: transparent;
+  color: var(--blue);
   letter-spacing: -0.02em;
   line-height: 1;
   margin: 8px 0 6px;
