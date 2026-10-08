@@ -3,7 +3,7 @@
 ## 1. Qué es
 
 ArcNode.cc es un servicio de hosting de servidores de Minecraft. La propuesta
-es simple y se vende así: **pagás por la RAM que usás, a $2 USD por GB**, sin
+es simple y se vende así: **pagás por la RAM que usás, a $1,80 USD por GB**, sin
 planes rígidos ni letra chica. El usuario entra al sitio, elige cuánta RAM
 necesita (con una calculadora en vivo), paga, y a los segundos tiene su
 servidor corriendo con panel de administración propio.
@@ -77,7 +77,7 @@ evaluadas:
 
 ### Propuesta de valor
 
-- **Precio simple y transparente**: $2 USD/GB de RAM, nada de planes
+- **Precio simple y transparente**: $1,80 USD/GB de RAM, nada de planes
   escalonados con letra chica ni "ofertas" que en realidad son el precio
   normal.
 - **Activación inmediata**: el servidor existe en segundos, no hay "ticket de

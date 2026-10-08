@@ -1,9 +1,10 @@
 // ArcNode.cc — Minecraft hosting plans.
-// Pricing rule per docs: flat $2 USD / GB RAM on every paid plan.
+// Pricing rule per docs: flat $1.80 USD / GB RAM on every paid plan.
 // Generated from the plan table so price, ARS conversion and tier
 // thresholds live in one place instead of 25 hardcoded objects.
 
 const USD_TO_ARS = 1500;
+const PRICE_PER_GB = 1.8;
 
 const PLAN_NAMES = [
   "Madera", "Piedra Arenisca", "Hierro", "Oro", "Diamante",
@@ -51,13 +52,13 @@ PLAN_NAMES.forEach((name, i) => {
   const players = PLAYERS[i];
   const tier = tierFor(ram);
   const isFirstOfTier = ram === tier.from;
-  const price = ram * 2;
+  const price = ram * PRICE_PER_GB;
 
   plans.push({
     ...(isFirstOfTier ? { tier: tier.name, tierDesc: tier.desc } : {}),
     name, ram, price,
     priceARS: price * USD_TO_ARS,
-    pgb: 2, pgbARS: 2 * USD_TO_ARS,
+    pgb: PRICE_PER_GB, pgbARS: PRICE_PER_GB * USD_TO_ARS,
     players,
     ssd: ram >= 8 ? `${players} GB NVMe` : `${players} GB`,
     modpacks: ram >= 6 ? "a pedido" : false,

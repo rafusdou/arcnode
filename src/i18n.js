@@ -57,7 +57,7 @@ export const ARCNODE_I18N = {
     plans: {
       eyebrow: "26 planes desde gratis hasta 25 GB",
       title: "Encontrá tu tamaño exacto.",
-      sub: "$2 USD por GB de RAM, siempre. Cambiá entre planes con un click — sin migraciones, sin downtime.",
+      sub: "$1,80 USD por GB de RAM, siempre. Cambiá entre planes con un click — sin migraciones, sin downtime.",
       tabs: { all: "Todos", free: "Gratis", basic: "Básico", inter: "Intermedio", adv: "Avanzado", elite: "Elite" },
       tierDesc: {
         "Gratis": "Para probar el servicio",
@@ -169,7 +169,7 @@ export const ARCNODE_I18N = {
     plans: {
       eyebrow: "26 plans from free to 25 GB",
       title: "Find your exact size.",
-      sub: "$2 USD per GB of RAM, always. Switch plans with one click — no migrations, no downtime.",
+      sub: "$1.80 USD per GB of RAM, always. Switch plans with one click — no migrations, no downtime.",
       tabs: { all: "All", free: "Free", basic: "Basic", inter: "Intermediate", adv: "Advanced", elite: "Elite" },
       tierDesc: {
         "Gratis": "Try the service",

@@ -28,7 +28,7 @@ export default function Docs() {
             <h2>Crear tu primer server</h2>
             <p>Después de crear tu cuenta, vas a llegar al panel de control. Para crear un servidor nuevo, hacé click en el botón <strong>+ Nuevo servidor</strong> arriba a la derecha.</p>
             <h3>1. Elegí tu plan</h3>
-            <p>Vas a ver los 26 planes disponibles, todos a $2 USD por GB de RAM. Si no estás seguro de cuánto necesitás, usá la <a href="/#calc">calculadora de RAM</a>.</p>
+            <p>Vas a ver los 26 planes disponibles, todos a $1,80 USD por GB de RAM. Si no estás seguro de cuánto necesitás, usá la <a href="/#calc">calculadora de RAM</a>.</p>
             <h3>2. Configurá las opciones</h3>
             <p>Elegí versión y tipo (Paper, Forge, Fabric). Si querés un modpack preinstalado, abrí un ticket en Discord — lo instalamos en menos de 1 hora.</p>
             <h3>3. Encendé el servidor</h3>

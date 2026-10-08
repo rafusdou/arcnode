@@ -20,7 +20,7 @@ export default function Terminos() {
           <h2 id="b">2. Servicio</h2>
           <p>ArcNode brinda hosting de servidores de Minecraft y servicios relacionados. No somos Mojang ni Microsoft. Minecraft® es marca de Mojang AB.</p>
           <h2 id="c">3. Pagos y facturación</h2>
-          <p>Los planes son prepagos por mes, a $2 USD por GB de RAM. Aceptamos MercadoPago (ARS) y Stripe (USD). Garantía de devolución de 14 días desde el primer pago.</p>
+          <p>Los planes son prepagos por mes, a $1,80 USD por GB de RAM. Aceptamos MercadoPago (ARS) y Stripe (USD). Garantía de devolución de 14 días desde el primer pago.</p>
           <h2 id="d">4. Uso aceptable</h2>
           <p>No podés usar ArcNode para:</p>
           <ul>

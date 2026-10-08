@@ -13,7 +13,7 @@ export default function About() {
         </div>
         <div className="legal-content" style={{ maxWidth: 760 }}>
           <h2>Nuestra historia</h2>
-          <p>Somos un equipo chico en Buenos Aires. Arrancamos por un servidor propio que laggeaba con 10 jugadores en un hosting europeo. Cuando vimos que ningún hosting argentino tenía hardware decente ni precios claros, decidimos hacerlo nosotros: $2 USD por GB, sin letra chica.</p>
+          <p>Somos un equipo chico en Buenos Aires. Arrancamos por un servidor propio que laggeaba con 10 jugadores en un hosting europeo. Cuando vimos que ningún hosting argentino tenía hardware decente ni precios claros, decidimos hacerlo nosotros: $1,80 USD por GB, sin letra chica.</p>
           <h2>Hardware</h2>
           <p>Todos nuestros nodos corren Ryzen 9 7950X con NVMe Gen4 en RAID. Anti-DDoS a 1.5 Tbps en todos los planes pagos.</p>
           <h2>Compromiso</h2>

@@ -16,7 +16,7 @@ export default function PlanesMinecraft() {
       <PageHeader
         eyebrow="Minecraft Hosting"
         title="26 planes desde gratis hasta 25 GB de RAM"
-        sub="$2 USD por GB de RAM, siempre. Cambiá entre planes con un click — sin migraciones, sin downtime."
+        sub="$1,80 USD por GB de RAM, siempre. Cambiá entre planes con un click — sin migraciones, sin downtime."
         actions={<>
           <Link className="btn btn-primary btn-lg" to="/#planes">Ver todos los planes</Link>
           <Link className="btn btn-ghost btn-lg" to="/#calc">Calculadora de RAM</Link>
