@@ -1,0 +1,19 @@
+# systemd unit for the metrics agent on the core machine.
+# Install (on the core, adjust the paths if the repo lives elsewhere):
+#   sudo cp agent/changuihost-agent.service /etc/systemd/system/
+#   sudo systemctl daemon-reload && sudo systemctl enable --now changuihost-agent
+[Unit]
+Description=Changuihost metrics agent
+After=network-online.target docker.service
+RequiresMountsFor=/mnt/c
+
+[Service]
+User=rafas
+WorkingDirectory=/mnt/c/Users/rafas/OneDrive/Desktop/ArcNode
+Environment=METRICS_DATA_DIR=/home/rafas/.changuihost-agent
+ExecStart=/usr/local/bin/node --env-file=.env agent/index.js
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
