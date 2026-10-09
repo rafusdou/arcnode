@@ -105,8 +105,13 @@ Bot de Discord (Node, corre en la PC de Rafa) ──► mismo panel
   - A veces el deploy por CLI falla con un error pasajero ("Not authorized"
     o `"status": "error"`); reintentar funciona.
 - **Dominio en Vercel:** `changuihost.com` y `www.changuihost.com` ya están
-  agregados al proyecto, pero **el DNS todavía no apunta a Vercel** (ver
-  pendientes).
+  agregados al proyecto.
+- **DNS:** desde el 9/10/2026 lo maneja **Cloudflare** (cuenta de Rafa, plan
+  Free). En Namecheap los nameservers son `dave.ns.cloudflare.com` y
+  `dell.ns.cloudflare.com`. Registros: `A @ 76.76.21.21` y `CNAME www
+  cname.vercel-dns.com`, los dos **DNS only** (nube gris; con proxy Vercel no
+  puede sacar el certificado). Quedaron los registros de mail de Namecheap
+  (privateemail) que Cloudflare importó solo.
 - **Carpeta local:** `C:\Users\rafas\OneDrive\Desktop\ArcNode` (Windows 11).
   El nombre de la carpeta quedó del nombre viejo.
 
@@ -387,18 +392,16 @@ o los documentos sin cambiarlos en el servicio rompe cosas:
 
 En orden de prioridad:
 
-1. **DNS de changuihost.com → Cloudflare.** Plan acordado: Rafa crea una
-   cuenta gratis en Cloudflare, agrega el dominio y cambia los nameservers en
-   Namecheap (Domain List → Manage → Nameservers → Custom DNS). Después:
-   - Registros para Vercel: `A @ 76.76.21.21` y `CNAME www
-     cname.vercel-dns.com`, ambos **sin proxy** (nube gris).
+1. **Panel en panel.changuihost.com.** El DNS ya está en Cloudflare (ver
+   sección 3). Falta:
    - Túnel con nombre (`cloudflared tunnel login`, `create`, `route dns`) en
      `panel.changuihost.com`, instalado como servicio en WSL para que arranque
      solo. Requiere que Rafa apruebe el login de Cloudflare en el navegador.
    - Rafa cambia `PTERODACTYL_URL` en Vercel a `https://panel.changuihost.com`
      por última vez. Conviene también actualizar `APP_URL` del panel.
-   - Mientras tanto, la alternativa rápida para que la web cargue es cargar
-     esos dos registros directo en Namecheap → Advanced DNS.
+   - En Namecheap el dominio muestra un "ALERT" en Status & Validity:
+     probablemente es la verificación del mail del titular. Si no se
+     confirma, Namecheap suspende el dominio.
 2. **Cargar la URL actual del túnel en Vercel** (`PTERODACTYL_URL`) si se
    quiere que el checkout ande antes de lo anterior.
 3. **Bot como servicio** para que no dependa de una terminal abierta.
