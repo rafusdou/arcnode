@@ -351,21 +351,41 @@ PowerShell como administrador.
 
 ### Túnel hacia Vercel
 
-- El backend en Vercel llega al panel con un túnel rápido de Cloudflare
-  (`cloudflared tunnel --url http://localhost:8080`, corriendo en WSL). **Es
-  temporal: Cloudflare lo da de baja cuando quiere y la URL cambia.** Cuando
-  pasa, el checkout de la web deja de andar y la página de Estado muestra
-  "No responde". Para arreglarlo hay que levantar un túnel nuevo y que Rafa
-  cambie `PTERODACTYL_URL` en Vercel a mano.
-- URL actual: `https://sing-vip-observer-dave.trycloudflare.com`. **Rafa
-  todavía no la cargó en Vercel**, así que hoy el checkout de producción no
-  anda.
-- La solución definitiva (pendiente) es un túnel con nombre en
-  `panel.changuihost.com` (ver pendientes).
+- Desde el 9/10/2026 hay un **túnel con nombre fijo** (`changuihost`)
+  instalado como servicio systemd en WSL (`cloudflared.service`, arranca
+  solo). Config en `/etc/cloudflared/config.yml`, protocolo `http2` (sale por
+  el 443). Dos direcciones:
+  - `panel.changuihost.com` → panel (`localhost:8080`).
+  - `metrics.changuihost.com` → agente de métricas (`localhost:4100`).
+- En Vercel: `PTERODACTYL_URL=https://panel.changuihost.com` y
+  `METRICS_URL=https://metrics.changuihost.com`. Ya no hay que tocarlas.
+- El certificado de la cuenta está en `~/.cloudflared/cert.pem` (sirve para
+  crear más rutas con `cloudflared tunnel route dns changuihost <host>`).
+- **Ojo al cargar variables en Vercel desde PowerShell:** el pipe le agrega
+  un BOM invisible al principio y la URL queda inválida. Cargarlas desde bash
+  con `printf '%s' valor | npx vercel env add NOMBRE production`.
+- `APP_URL` del panel sigue en localhost (no se tocó para no romper el acceso
+  local).
+
+### Agente de métricas y dashboard de admin
+
+- `/admin` en el sitio: dashboard con contraseña (= `METRICS_TOKEN` del
+  `.env`, que **solo** necesita el agente; Vercel no la guarda). Muestra CPU,
+  RAM, disco, red, capacidad vendida del nodo, historial de 1 h/24 h/7 días
+  y cada servidor con estado, consumo y jugadores conectados.
+- Los datos salen de `agent/index.js`, que corre en la máquina core como
+  servicio systemd (`changuihost-agent.service`, archivo en `agent/`). Mide
+  el host, consulta el panel y hace un "server list ping" de Minecraft a cada
+  servidor prendido para contar jugadores. Guarda un punto por minuto, 7 días,
+  en `/home/rafas/.changuihost-agent/history.json`.
+- El backend (`/api/admin/metrics`) solo reenvía el pedido al agente.
+- Node 22 está instalado en WSL en `/opt` (enlazado en `/usr/local/bin`).
+- Al pasar a la VPS: instalar Node, copiar el `.service` (ajustar rutas) y
+  agregar `metrics.<dominio>` al túnel.
 
 ### Herramientas instaladas en WSL
 
-`cloudflared`, `librsvg2-bin` (rsvg-convert) e `imagemagick`.
+`cloudflared`, Node 22, `librsvg2-bin` (rsvg-convert) e `imagemagick`.
 
 ---
 
@@ -392,18 +412,11 @@ o los documentos sin cambiarlos en el servicio rompe cosas:
 
 En orden de prioridad:
 
-1. **Panel en panel.changuihost.com.** El DNS ya está en Cloudflare (ver
-   sección 3). Falta:
-   - Túnel con nombre (`cloudflared tunnel login`, `create`, `route dns`) en
-     `panel.changuihost.com`, instalado como servicio en WSL para que arranque
-     solo. Requiere que Rafa apruebe el login de Cloudflare en el navegador.
-   - Rafa cambia `PTERODACTYL_URL` en Vercel a `https://panel.changuihost.com`
-     por última vez. Conviene también actualizar `APP_URL` del panel.
-   - En Namecheap el dominio muestra un "ALERT" en Status & Validity:
-     probablemente es la verificación del mail del titular. Si no se
-     confirma, Namecheap suspende el dominio.
-2. **Cargar la URL actual del túnel en Vercel** (`PTERODACTYL_URL`) si se
-   quiere que el checkout ande antes de lo anterior.
+1. **Namecheap:** el dominio muestra un "ALERT" en Status & Validity;
+   probablemente es la verificación del mail del titular. Si no se confirma,
+   Namecheap suspende el dominio.
+2. **Red de ORT:** FortiGuard bloquea `changuihost.com` y sus subdominios
+   ("Newly Observed Domain"). Desde ahí usar `arcnode-cc.vercel.app`.
 3. **Bot como servicio** para que no dependa de una terminal abierta.
 4. **Precio del dominio:** preguntarle a Rafa cuánto pagó `changuihost.com`
    y completarlo en `docs/PROYECTO.md` y `docs/PROFIT.md` (hoy dice "completar").
