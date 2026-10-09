@@ -364,8 +364,28 @@ PowerShell como administrador.
 - **Ojo al cargar variables en Vercel desde PowerShell:** el pipe le agrega
   un BOM invisible al principio y la URL queda inválida. Cargarlas desde bash
   con `printf '%s' valor | npx vercel env add NOMBRE production`.
-- `APP_URL` del panel sigue en localhost (no se tocó para no romper el acceso
-  local).
+- `APP_URL` del panel es `https://panel.changuihost.com` (los links de los
+  mails apuntan ahí). `SANCTUM_STATEFUL_DOMAINS` incluye además
+  `localhost:8080` y `10.10.32.27:8080`, así el panel sigue andando por la
+  dirección local. Si cambia la IP de la LAN, agregarla ahí.
+
+### Mail (Private Email de Namecheap)
+
+- Plan "Expand" (hasta 3 casillas). **Es una prueba gratis que vence el
+  9/11/2026** con renovación automática: necesita un medio de pago de un
+  adulto o desactivar "Auto-renew".
+- Casillas: `support@changuihost.com` (remitente de todos los mails a
+  clientes) y `admin@changuihost.com` (interna). Contraseñas en `.env`
+  (`SUPPORT_EMAIL_PASSWORD`, `ADMIN_EMAIL_PASSWORD`). Webmail:
+  privateemail.com. SMTP `mail.privateemail.com:465` (SSL), IMAP `:993`.
+- DNS en Cloudflare: MX `mx1/mx2.privateemail.com`, SPF, DKIM
+  (`privateemail._domainkey`), DMARC `p=none` con reportes a admin@, y
+  `mail`/`autoconfig`/`autodiscover` → `privateemail.com` **sin proxy**.
+- El panel manda por SMTP con support@ (`MAIL_*` en el `docker-compose.yml`
+  del panel; hay copias `.bak-*` al lado). Probado: llega a la bandeja de
+  entrada firmado con DKIM. Los mails del panel están en inglés.
+- Usuario administrador del panel `changuihost-admin` (admin@changuihost.com).
+  El usuario `admin` viejo sigue existiendo.
 
 ### Agente de métricas y dashboard de admin
 
