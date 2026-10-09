@@ -24,7 +24,7 @@ export const FREE_SETTINGS = {
 };
 
 const TICKET_MAX_AGE_MS = 15 * 60 * 1000;
-const FREE_OWNER_EMAIL = "gratis@changuihost.cc";
+const FREE_OWNER_EMAIL = "gratis@changuihost.com";
 
 // No control.start / control.restart, and no schedules (a schedule can run a
 // power action), so the panel can't be used to skip the start page.

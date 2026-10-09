@@ -42,7 +42,7 @@ Mensajes secundarios, según a quién le hablemos:
   para confirmar que el producto aguanta antes de mostrárselo a nadie más.
 
 ### Fase 2 — Círculo cercano
-- Compartir el link de la demo (`arcnode-cc.vercel.app`, o `changuihost.cc`
+- Compartir el link de la demo (`arcnode-cc.vercel.app`, o `changuihost.com`
   cuando esté conectado el dominio) con gente que conocemos que juega
   Minecraft o tiene un server. Pedirles feedback honesto, no solo que
   "les guste".

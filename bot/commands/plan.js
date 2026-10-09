@@ -37,7 +37,7 @@ export async function execute(interaction) {
       { name: "Backups", value: p.backups ? "Desde el panel" : "No", inline: true },
       { name: "Soporte", value: p.free ? "Básico" : "Por Discord", inline: true },
     )
-    .setFooter({ text: "Elegí este plan en changuihost.cc" });
+    .setFooter({ text: "Elegí este plan en changuihost.com" });
 
   await interaction.reply({ embeds: [embed] });
 }

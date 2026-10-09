@@ -90,7 +90,7 @@ evaluadas:
 | Ítem | Costo aproximado |
 |---|---|
 | VPS Hetzner (nodo chico, varios servidores por nodo) | ~€5-20/mes según cuántos clientes |
-| Dominio (changuihost.cc) | US$2,40 el primer año, después US$8,55 por año (Porkbun) |
+| Dominio (changuihost.com) | Pago anual (completar con el precio real) |
 | Hosting del sitio (Vercel, plan gratuito para empezar) | $0 |
 | Panel Pterodactyl | $0 (open source) |
 

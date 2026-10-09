@@ -16,7 +16,7 @@ export async function execute(interaction) {
   const embed = new EmbedBuilder()
     .setColor(0xf2b33d)
     .setTitle("Planes de Changuihost")
-    .setDescription("$1,80 USD por GB de RAM en todos los planes, sin límite de jugadores en los pagos.\nEl detalle está en **changuihost.cc**.");
+    .setDescription("$1,80 USD por GB de RAM en todos los planes, sin límite de jugadores en los pagos.\nEl detalle está en **changuihost.com**.");
 
   for (const [tier, plans] of groups) {
     const lines = plans.map((p) => {

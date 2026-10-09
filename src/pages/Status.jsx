@@ -46,7 +46,7 @@ export default function Status() {
       />
       <div className="page-section">
         <div className="status-list">
-          <Row name="Sitio web" detail="changuihost.cc y el checkout" state="up" />
+          <Row name="Sitio web" detail="changuihost.com y el checkout" state="up" />
           <Row name="Panel y creación de servidores" detail="Panel de control y API de aprovisionamiento" state={panel} />
         </div>
         <p className="status-foot">

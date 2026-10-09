@@ -22,6 +22,6 @@ export async function onReady(client) {
 
   await ensurePickerMessage(client);
 
-  client.user.setActivity("changuihost.cc · /planes");
+  client.user.setActivity("changuihost.com · /planes");
   startFreePlanWorker();
 }

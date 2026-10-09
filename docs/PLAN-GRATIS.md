@@ -58,20 +58,20 @@ faltan se detallan abajo.
 
 ```
 Changuihost · Servidor gratis
-Creá el tuyo en changuihost.cc
+Creá el tuyo en changuihost.com
 ```
 
 Con colores (códigos `§`):
 
 ```
 §6§lChanguihost §r§7· §fServidor gratis
-§7Creá el tuyo en §6changuihost.cc
+§7Creá el tuyo en §6changuihost.com
 ```
 
 En `server.properties` el `§` va escapado y el salto de línea es `\n`:
 
 ```
-motd=§6§lChanguihost §r§7· §fServidor gratis\n§7Creá el tuyo en §6changuihost.cc
+motd=§6§lChanguihost §r§7· §fServidor gratis\n§7Creá el tuyo en §6changuihost.com
 ```
 
 **Cómo se fuerza (sin que el dueño lo pueda cambiar):** con eggs propios para
@@ -89,7 +89,7 @@ límites; si lo ponés también acá, no pasa nada):
       "server-ip": "0.0.0.0",
       "server-port": "{{server.build.default.port}}",
       "query.port": "{{server.build.default.port}}",
-      "motd": "§6§lChanguihost §r§7· §fServidor gratis\\n§7Creá el tuyo en §6changuihost.cc",
+      "motd": "§6§lChanguihost §r§7· §fServidor gratis\\n§7Creá el tuyo en §6changuihost.com",
       "max-players": "3"
     }
   }
@@ -109,7 +109,7 @@ eggs (en vez de los normales) cuando el plan es gratis: en `SERVER_TYPES` de
   **FREE** en letras oscuras sobre amarillo `#F2B33D`. Tiene que leerse a 64 px, así que
   nada de texto chico.
 - Se publica en el sitio como `public/free-server-icon.png` (queda en
-  `https://changuihost.cc/free-server-icon.png`).
+  `https://changuihost.com/free-server-icon.png`).
 
 **Cómo se fuerza:** se descarga en cada arranque con un prefijo en el
 comando de inicio, igual que el truco que ya usamos para la EULA
@@ -118,7 +118,7 @@ inicio desde su panel, solo un admin.
 
 ```js
 const FREE_ICON_PREFIX =
-  '$(curl -fsSL -o server-icon.png https://changuihost.cc/free-server-icon.png) ';
+  '$(curl -fsSL -o server-icon.png https://changuihost.com/free-server-icon.png) ';
 // startup: FREE_ICON_PREFIX + EULA_PREFIX + egg.startup
 ```
 
@@ -157,10 +157,10 @@ pendiente.
 
 | id | Mensaje |
 |---|---|
-| `marca-1` | Este servidor está alojado gratis en **Changuihost**. ¿Querés uno propio? **changuihost.cc** |
+| `marca-1` | Este servidor está alojado gratis en **Changuihost**. ¿Querés uno propio? **changuihost.com** |
 | `marca-2` | ¿Te gusta este server? El dueño puede pasarlo a un plan pago desde **{precio_1gb}/mes** y sacar estos mensajes. |
 | `marca-3` | Los planes pagos de Changuihost quedan prendidos 24/7, aunque no haya nadie conectado. |
-| `marca-4` | Con **2 GB** entran hasta 10 jugadores y podés usar más plugins. Planes en **changuihost.cc** |
+| `marca-4` | Con **2 GB** entran hasta 10 jugadores y podés usar más plugins. Planes en **changuihost.com** |
 
 `{precio_1gb}` se completa desde `src/data/plans.js` (el worker lo importa),
 así el precio de los mensajes nunca queda desactualizado respecto de la web.
@@ -207,7 +207,7 @@ Los mensajes se mandan con `tellraw`, que permite colores y links que se
 pueden clickear. Ejemplo de `marca-1`:
 
 ```
-tellraw @a ["",{"text":"[Changuihost] ","color":"gold","bold":true},{"text":"Este servidor está alojado gratis en ","color":"gray"},{"text":"Changuihost","color":"white","bold":true},{"text":". ¿Querés uno propio? ","color":"gray"},{"text":"changuihost.cc","color":"gold","underlined":true,"clickEvent":{"action":"open_url","value":"https://changuihost.cc/?utm_source=free_server&utm_medium=chat&utm_campaign=marca-1"}}]
+tellraw @a ["",{"text":"[Changuihost] ","color":"gold","bold":true},{"text":"Este servidor está alojado gratis en ","color":"gray"},{"text":"Changuihost","color":"white","bold":true},{"text":". ¿Querés uno propio? ","color":"gray"},{"text":"changuihost.com","color":"gold","underlined":true,"clickEvent":{"action":"open_url","value":"https://changuihost.com/?utm_source=free_server&utm_medium=chat&utm_campaign=marca-1"}}]
 ```
 
 **Ojo con la versión:** desde Minecraft **1.21.5** cambió el formato de los
@@ -219,7 +219,7 @@ formato que corresponde. Si la versión es `latest`, se usa el formato nuevo.
 ## 5. Página de arranque y boost de RAM (ya implementado)
 
 Los servidores gratis no se prenden desde el panel: se prenden desde su
-**página de arranque** (`changuihost.cc/arrancar/<id>?t=<token>`). El link se
+**página de arranque** (`changuihost.com/arrancar/<id>?t=<token>`). El link se
 muestra al terminar el checkout gratis y el cliente lo tiene que guardar.
 
 **Cómo funciona para el cliente:**
@@ -237,7 +237,7 @@ muestra al terminar el checkout gratis y el cliente lo tiene que guardar.
 
 **Por qué no se puede hacer trampa:**
 
-- El servidor gratis es de una cuenta de servicio (`gratis@changuihost.cc`).
+- El servidor gratis es de una cuenta de servicio (`gratis@changuihost.com`).
   El cliente entra como subusuario: tiene consola, archivos y puede apagarlo,
   pero no tiene permiso de prender ni reiniciar, ni de crear tareas
   programadas (que también podrían prenderlo).

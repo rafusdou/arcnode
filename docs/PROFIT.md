@@ -65,7 +65,7 @@ al punto de que todo lague, sino no dejar recursos pagos completamente
 ociosos.
 
 ### b) Los costos fijos no se repiten por cliente
-El dominio (US$2,40 el primer año y US$8,55 por año después, en Porkbun), el panel (Pterodactyl, gratis), el sitio
+El dominio (changuihost.com, que se paga una vez por año), el panel (Pterodactyl, gratis), el sitio
 (Vercel, gratis en el plan actual) — esos costos existen una sola vez, sin
 importar si hay 1 cliente o 100. Cuanta más gente se suma, más se diluyen
 esos costos fijos por cabeza.
@@ -113,7 +113,7 @@ Estos no se ofrecen hasta resolver lo que les falta.
 
 | Agregado | Qué falta |
 |---|---|
-| Subdominio (`tuserver.changuihost.cc`) | Pasar el dominio a Cloudflare. Después el backend crea un registro SRV por API apuntando a la IP y el puerto del server |
+| Subdominio (`tuserver.changuihost.com`) | Pasar el dominio a Cloudflare. Después el backend crea un registro SRV por API apuntando a la IP y el puerto del server |
 | IP dedicada | Una VPS con IPs extra, que el proveedor cobra aparte. Hoy todo sale de una sola IP |
 | Anti-DDoS reforzado | Primero tiene que existir la protección base (proveedor con mitigación + TCPShield) |
 | Backups fuera del nodo | Un almacenamiento externo compatible con S3. Pterodactyl ya sabe guardar backups ahí |
