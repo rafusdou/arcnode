@@ -1,0 +1,24 @@
+# systemd unit for the Discord bot (and the free plan worker inside it).
+# It must run on the same machine as the panel and Wings: the worker pings
+# the Minecraft servers on 127.0.0.1.
+# Install (on the core, adjust the paths if the repo lives elsewhere):
+#   sudo cp bot/changuihost-bot.service /etc/systemd/system/
+#   sudo systemctl daemon-reload && sudo systemctl enable --now changuihost-bot
+# Logs: journalctl -u changuihost-bot -f
+[Unit]
+Description=Changuihost Discord bot
+After=network-online.target docker.service
+Wants=network-online.target
+RequiresMountsFor=/mnt/c
+
+[Service]
+User=rafas
+WorkingDirectory=/mnt/c/Users/rafas/OneDrive/Desktop/ArcNode
+# The panel is in Docker on this same machine.
+Environment=PTERODACTYL_URL=http://localhost:8080
+ExecStart=/usr/local/bin/node --env-file=.env bot/index.js
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target

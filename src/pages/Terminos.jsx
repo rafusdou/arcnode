@@ -43,7 +43,8 @@ export default function Terminos() {
           <p>
             El plan gratis es para probar el servicio y tiene recursos limitados. Los servidores del plan
             gratis pueden mostrar mensajes de Changuihost y de patrocinadores en el chat del juego y en la
-            lista de servidores, y se apagan automáticamente cuando no hay jugadores conectados. Se prenden
+            lista de servidores, desconectan a los jugadores que quedan inactivos más de 10 minutos y se
+            apagan automáticamente después de 15 minutos sin jugadores conectados. Se prenden
             desde su página de arranque, con una espera previa, y no desde el panel. Se puede tener un
             servidor gratis por persona. Podemos cambiar las condiciones del plan gratis o dejar
             de ofrecerlo, avisando con anticipación.

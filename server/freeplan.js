@@ -81,10 +81,10 @@ export function parseFreeExternalId(externalId) {
   return m ? { customerId: Number(m[1]), boostUntil: m[2] ? Number(m[2]) : null } : null;
 }
 
-export async function listAllServers() {
+export async function listAllServers(include = "") {
   const servers = [];
   for (let page = 1; ; page++) {
-    const res = await pterodactyl(`/api/application/servers?per_page=100&page=${page}`);
+    const res = await pterodactyl(`/api/application/servers?per_page=100&page=${page}${include ? `&include=${include}` : ""}`);
     servers.push(...res.data.map((d) => d.attributes));
     if (page >= res.meta.pagination.total_pages) return servers;
   }
@@ -281,12 +281,13 @@ async function revertBoost(server, meta, log) {
 }
 
 const reverting = new Set();
+export const isReverting = (serverId) => reverting.has(serverId);
 
 // Called every minute by the bot: gives customers access to freshly installed
 // free servers and ends expired boosts. Also catches a free server left with
 // extra RAM but no boost marker (e.g. if writing the marker failed mid-boost).
-export async function runFreePlanChecks(log = console.log) {
-  const servers = await listAllServers();
+export async function runFreePlanChecks(log = console.log, servers = null) {
+  servers ||= await listAllServers();
   for (const server of servers) {
     const meta = parseFreeExternalId(server.external_id);
     if (!meta) continue;

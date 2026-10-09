@@ -260,9 +260,13 @@ Detalle completo en `docs/PLAN-GRATIS.md`. Resumen de lo que ya funciona:
 - **El anuncio de hoy es una promo propia** de los planes pagos (componente
   `AdSlot` en `src/pages/Arrancar.jsx`). Cuando haya sponsors, van ahí.
 
-Pendiente del plan gratis: mensajes en el chat (marca, contextuales,
-sponsors), MOTD e ícono forzados, y apagado automático cuando no hay
-jugadores. Todo está especificado en `docs/PLAN-GRATIS.md`.
+Desde el 9/10/2026 también están: MOTD e ícono FREE forzados y anti-AFK
+(`player-idle-timeout=10`), vía `FREE_PREFIX` en `server/app.js`; apagado
+a los 15 min sin jugadores y mensajes `[Changuihost]` en el chat, vía
+`server/freeactivity.js` (lo corre el worker del bot). Sponsors en
+`bot/sponsors.json` (hoy vacío). Detalle en `docs/PLAN-GRATIS.md`. El
+"server list ping" de Minecraft está en `server/mcping.js` (lo usan el bot
+y el agente).
 
 ### Bug ya resuelto que conviene recordar
 
@@ -293,8 +297,11 @@ volver a tratar un error como "offline".**
 - **Worker del plan gratis:** arranca solo cuando el bot se conecta.
 - Requiere activado el intent privilegiado "Server Members" en el Developer
   Portal (ya está).
-- **Hay que dejarlo corriendo siempre** (`npm run bot`). Hoy no está instalado
-  como servicio: si se cierra la terminal o se apaga la PC, se corta.
+- **Corre como servicio systemd en WSL** (`changuihost-bot.service`, archivo
+  en `bot/`), así arranca solo y hay una sola copia. No arrancarlo además con
+  `npm run bot`: dos copias duplican los mensajes del plan gratis.
+  Logs: `journalctl -u changuihost-bot -f`. Para tomar cambios de código:
+  `sudo systemctl restart changuihost-bot`.
 
 ---
 
@@ -437,14 +444,14 @@ En orden de prioridad:
    Namecheap suspende el dominio.
 2. **Red de ORT:** FortiGuard bloquea `changuihost.com` y sus subdominios
    ("Newly Observed Domain"). Desde ahí usar `arcnode-cc.vercel.app`.
-3. **Bot como servicio** para que no dependa de una terminal abierta.
 4. **Precio del dominio:** preguntarle a Rafa cuánto pagó `changuihost.com`
    y completarlo en `docs/PROYECTO.md` y `docs/PROFIT.md` (hoy dice "completar").
 5. **Seguridad:** el token del bot y las API keys del panel se pegaron en el
    chat en algún momento. Conviene regenerarlos (Developer Portal de Discord y
    panel → Application API / Account → API) y actualizar `.env` y Vercel.
-6. **Plan gratis, lo que falta:** mensajes en el chat, MOTD e ícono, apagado
-   por inactividad (todo especificado en `docs/PLAN-GRATIS.md`).
+6. **Plan gratis:** el servidor `MiServerEpico` (id 27) se creó antes del
+   prefijo nuevo, así que no tiene MOTD, ícono ni anti-AFK. Falta leer las
+   Minecraft Usage Guidelines sobre publicidad antes de lanzar.
 7. **Chatbot con IA** (Rafa preguntó si se podía): en la web, para recomendar
    plan y responder dudas, o en los tickets de Discord. Falta que elija cuál.
    Necesita una cuenta de API a nombre de un adulto.

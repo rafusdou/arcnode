@@ -14,11 +14,11 @@
 import http from "node:http";
 import os from "node:os";
 import fs from "node:fs/promises";
-import net from "node:net";
 import path from "node:path";
 import { createHash, timingSafeEqual } from "node:crypto";
 import { fileURLToPath } from "node:url";
 import { hasPanelConfig, pterodactyl, pterodactylClient } from "../server/ptero.js";
+import { pingPlayers } from "../server/mcping.js";
 
 const {
   METRICS_TOKEN,
@@ -136,75 +136,6 @@ async function hostInfo() {
     uptimeSec: Math.round(os.uptime()),
     load: os.loadavg().map((n) => Math.round(n * 100) / 100),
   };
-}
-
-// ---------- Minecraft "server list ping" ----------
-// The same request the multiplayer menu makes: it answers with the player
-// count without logging in or touching the server's files.
-
-function varint(n) {
-  const out = [];
-  do {
-    let b = n & 0x7f;
-    n >>>= 7;
-    if (n) b |= 0x80;
-    out.push(b);
-  } while (n);
-  return Buffer.from(out);
-}
-
-function readVarint(buf, offset) {
-  let value = 0;
-  for (let i = 0; i < 5; i++) {
-    if (offset + i >= buf.length) return null;
-    const b = buf[offset + i];
-    value |= (b & 0x7f) << (7 * i);
-    if (!(b & 0x80)) return [value, offset + i + 1];
-  }
-  return null;
-}
-
-const packet = (...parts) => {
-  const body = Buffer.concat(parts);
-  return Buffer.concat([varint(body.length), body]);
-};
-
-function pingPlayers(port, host = "127.0.0.1") {
-  return new Promise((resolve) => {
-    const sock = net.connect({ host, port });
-    let buf = Buffer.alloc(0);
-    let done = false;
-    const finish = (v) => {
-      if (done) return;
-      done = true;
-      sock.destroy();
-      resolve(v);
-    };
-    sock.setTimeout(3000, () => finish(null));
-    sock.on("error", () => finish(null));
-    sock.on("connect", () => {
-      const hostBuf = Buffer.from(host);
-      const portBuf = Buffer.alloc(2);
-      portBuf.writeUInt16BE(port);
-      // Handshake (protocol 47 is fine for a status request) + status request.
-      sock.write(packet(varint(0), varint(47), varint(hostBuf.length), hostBuf, portBuf, varint(1)));
-      sock.write(packet(varint(0)));
-    });
-    sock.on("data", (chunk) => {
-      buf = Buffer.concat([buf, chunk]);
-      const len = readVarint(buf, 0);
-      if (!len || buf.length < len[1] + len[0]) return;
-      const id = readVarint(buf, len[1]);
-      const strLen = id && readVarint(buf, id[1]);
-      if (!strLen) return finish(null);
-      try {
-        const status = JSON.parse(buf.subarray(strLen[1], strLen[1] + strLen[0]).toString("utf8"));
-        finish({ online: status.players?.online ?? 0, max: status.players?.max ?? null });
-      } catch {
-        finish(null);
-      }
-    });
-  });
 }
 
 // ---------- Panel ----------

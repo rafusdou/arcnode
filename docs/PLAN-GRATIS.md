@@ -47,7 +47,10 @@ del juego.
 | Checkout sin tarjeta | — | El checkout del plan gratis no pide medio de pago y dice "Soporte: Básico" | Ya está |
 | Arranque | Solo desde la página de arranque, con 1 minuto de espera | El cliente es subusuario sin permiso de prender (ver sección 5) | Ya está |
 | Boost de RAM | 2 GB durante 1 hora a cambio de un anuncio | Página de arranque + worker del bot (ver sección 5) | Ya está |
-| Apagado por inactividad | 15 min sin jugadores | Worker (ver sección 6) | Falta |
+| Apagado por inactividad | 15 min sin jugadores | Worker del bot, `server/freeactivity.js` (ver sección 6). Configurable con `FREE_IDLE_STOP_MINUTES` | Ya está |
+| Anti-AFK | Echa a quien esté quieto 10 min | `player-idle-timeout=10` forzado en cada arranque (función de Minecraft, anda en Paper y Vanilla). Así un jugador AFK no evita el apagado | Ya está |
+| MOTD e ícono | Marca Changuihost y franja FREE | Prefijo `FREE_PREFIX` en `server/app.js` (ver sección 3) | Ya está |
+| Mensajes en el chat | Ver sección 4 | Worker del bot, `server/freeactivity.js` | Ya está |
 
 Los límites que ya están salen solos de cómo está armado el backend. Los que
 faltan se detallan abajo.
@@ -74,7 +77,9 @@ En `server.properties` el `§` va escapado y el salto de línea es `\n`:
 motd=§6§lChanguihost §r§7· §fServidor gratis\n§7Creá el tuyo en §6changuihost.com
 ```
 
-**Cómo se fuerza (sin que el dueño lo pueda cambiar):** con eggs propios para
+**Cómo se fuerza (implementado):** no hicieron falta eggs propios. El backend le agrega a los servidores gratis un prefijo en el comando de arranque (`FREE_PREFIX` en `server/app.js`) que en cada arranque borra y vuelve a escribir `motd` y `player-idle-timeout` en `server.properties`, y baja el ícono. El MOTD va con escapes `§` porque el comando de arranque pasa por `eval echo` y tiene que ser ASCII. El dueño no puede editar el comando de arranque (su subusuario solo tiene `startup.read`). Los servidores gratis creados antes del 9/10/2026 no tienen el prefijo.
+
+**Idea original (descartada):** con eggs propios para
 el plan gratis. En el panel de admin, Nests → Minecraft, se clonan los eggs de
 Paper y Vanilla como "Paper (Gratis)" y "Vanilla (Gratis)". En la pestaña
 *Configuration* de cada uno, en *Configuration Files*, se agrega `motd` a lo
@@ -108,6 +113,7 @@ eggs (en vez de los normales) cuando el plan es gratis: en `SERVER_TYPES` de
 - Diseño: el logo de Changuihost sobre fondo oscuro y una franja abajo que diga
   **FREE** en letras oscuras sobre amarillo `#F2B33D`. Tiene que leerse a 64 px, así que
   nada de texto chico.
+- Fuente: `brand/free-server-icon.svg` (ya hecho; se regenera con `rsvg-convert -w 64 -h 64`).
 - Se publica en el sitio como `public/free-server-icon.png` (queda en
   `https://changuihost.com/free-server-icon.png`).
 
@@ -159,10 +165,10 @@ pendiente.
 |---|---|
 | `marca-1` | Este servidor está alojado gratis en **Changuihost**. ¿Querés uno propio? **changuihost.com** |
 | `marca-2` | ¿Te gusta este server? El dueño puede pasarlo a un plan pago desde **{precio_1gb}/mes** y sacar estos mensajes. |
-| `marca-3` | Los planes pagos de Changuihost quedan prendidos 24/7, aunque no haya nadie conectado. |
-| `marca-4` | Con **2 GB** entran hasta 10 jugadores y podés usar más plugins. Planes en **changuihost.com** |
+| `marca-3` | Los planes pagos no se apagan cuando no hay nadie conectado. Planes en **changuihost.com** |
+| `marca-4` | Con **2 GB** entran hasta {jugadores_2gb} jugadores. Planes en **changuihost.com** |
 
-`{precio_1gb}` se completa desde `src/data/plans.js` (el worker lo importa),
+Los textos implementados están en `MESSAGES` de `server/freeactivity.js`. `{precio_1gb}`, los jugadores y los nombres de planes se completan desde `src/data/plans.js` (el worker lo importa),
 así el precio de los mensajes nunca queda desactualizado respecto de la web.
 
 ### 4.3 Mensajes contextuales (basados en datos reales)
@@ -172,7 +178,7 @@ por servidor.
 
 | id | Cuándo se dispara | Mensaje |
 |---|---|---|
-| `lleno` | Hay 3 de 3 jugadores conectados | El servidor está lleno (3/3). Con el plan **Madera** entran 5 y con **Piedra Arenisca**, 10. |
+| `lleno` | Hay 3 de 3 jugadores conectados | El servidor está lleno (3/3). Con el plan **Madera** entran 5 y con **Piedra Arenisca**, 8. |
 | `memoria` | Memoria arriba del 85% durante 2 minutos seguidos | El servidor está usando casi toda su memoria y puede andar más lento. Con 2 GB tendría el doble. |
 | `apagado` | El servidor se apagó por inactividad y alguien lo vuelve a prender | Este servidor se apaga solo cuando no hay nadie. Los planes pagos quedan prendidos todo el día. |
 
@@ -275,8 +281,9 @@ Los mensajes, el apagado por inactividad y los contextuales necesitan un
 proceso que corra todo el tiempo. Va dentro del bot de Discord, que ya corre
 24/7 en la misma máquina que el panel y ya habla con la API de Pterodactyl.
 El archivo `bot/freeplan.js` ya existe y corre cada minuto: hoy da acceso a
-los clientes cuando termina la instalación y termina los boosts vencidos. Lo
-que sigue (mensajes y apagado por inactividad) se suma ahí.
+los clientes cuando termina la instalación y termina los boosts vencidos. Los
+mensajes y el apagado por inactividad están en `server/freeactivity.js`, que
+el mismo worker llama después.
 
 Cada 60 segundos:
 
@@ -292,6 +299,8 @@ Cada 60 segundos:
    cliente del admin. El dueño no puede bloquear esto desde su panel.
 5. Si lleva 15 minutos seguidos con 0 jugadores, lo apaga con
    `POST /api/client/servers/{id}/power` (`{"signal": "stop"}`).
+
+**Ojo con `memoria`:** Java tiende a ocupar toda la RAM que tiene, así que este mensaje probablemente salga casi siempre (como mucho una vez por hora). Si molesta, subir el umbral `MEMORY_HIGH`.
 
 El estado (último mensaje mandado, minutos sin jugadores, cuándo arrancó)
 vive en memoria. Si el bot se reinicia se pierde, y lo peor que pasa es que

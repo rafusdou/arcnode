@@ -61,6 +61,25 @@ const playersPrefix = (plan) =>
     ? `$(sed -i "/^max-players=/d" server.properties 2>/dev/null; echo "max-players=${plan.maxPlayers}" >> server.properties) `
     : `$(grep -q "^max-players=" server.properties 2>/dev/null || echo "max-players=${UNLIMITED_PLAYERS}" >> server.properties) `;
 
+// Free servers only, rewritten on every boot so editing the files doesn't
+// stick (the owner can't edit the startup line):
+// - MOTD with the brand, as \u escapes: the startup line goes through
+//   `eval echo`, so it has to stay plain ASCII, and Java reads \uXXXX in
+//   server.properties as the real character (§ colors, á, ·).
+// - player-idle-timeout kicks anyone idle for 10 minutes, so an AFK player
+//   can't keep the server from shutting down when nobody's really playing
+//   (the bot's worker stops it after 15 minutes empty).
+// - The FREE icon, downloaded to a temp file first so a failed download
+//   leaves the previous icon instead of an empty one.
+const FREE_MOTD =
+  "\\u00a76\\u00a7lChanguihost \\u00a7r\\u00a77\\u00b7 \\u00a7fServidor gratis\\n\\u00a77Cre\\u00e1 el tuyo en \\u00a76changuihost.com";
+const FREE_IDLE_MINUTES = 10;
+const FREE_ICON_URL = "https://changuihost.com/free-server-icon.png";
+const FREE_PREFIX =
+  `$(sed -i "/^motd=/d;/^player-idle-timeout=/d" server.properties 2>/dev/null; ` +
+  `printf "%s\\n" "motd=${FREE_MOTD}" "player-idle-timeout=${FREE_IDLE_MINUTES}" >> server.properties) ` +
+  `$(curl -fsSL -m 10 -o .server-icon.tmp ${FREE_ICON_URL} && mv .server-icon.tmp server-icon.png) `;
+
 async function getEgg(eggId) {
   const res = await pterodactyl(`/api/application/nests/${NEST_ID}/eggs/${eggId}?include=variables`);
   return res.attributes;
@@ -160,7 +179,7 @@ async function createServer({ owner, customer, plan, serverName, allocation, ser
       egg: type.eggId,
       nest: NEST_ID,
       docker_image: egg.docker_image,
-      startup: playersPrefix(plan) + EULA_PREFIX + egg.startup,
+      startup: (plan.free ? FREE_PREFIX : "") + playersPrefix(plan) + EULA_PREFIX + egg.startup,
       environment,
       limits: { memory, swap: 0, disk, io: 500, cpu: cpuLimitFor(plan) },
       feature_limits: { databases: 0, backups: plan.backups ? 1 : 0, allocations: 1 },
