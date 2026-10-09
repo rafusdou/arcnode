@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { useApp } from "../context/AppContext.jsx";
-import { ARCNODE_PLANS } from "../data/plans.js";
+import { PLANS } from "../data/plans.js";
 import { fmtPrice } from "../utils/currency.js";
 
 const TIER_KEYS = { all: null, free: "Gratis", basic: "Básico", inter: "Intermedio", adv: "Avanzado", elite: "Elite" };
@@ -44,7 +44,7 @@ export default function Plans({ selectedRam }) {
 
   const groups = useMemo(() => {
     const g = [];
-    ARCNODE_PLANS.forEach((p) => {
+    PLANS.forEach((p) => {
       if (p.tier) g.push({ tier: p.tier, items: [] });
       g[g.length - 1].items.push(p);
     });

@@ -7,7 +7,7 @@ const STEPS = [
     d: "Descargá la carpeta del mundo (normalmente se llama world) y, si usás plugins o mods, también las carpetas plugins o mods. La mayoría de los hosts tiene un administrador de archivos o acceso por FTP para esto. Comprimí todo en un .zip.",
   },
   {
-    t: "Creá tu servidor en ArcNode",
+    t: "Creá tu servidor en Changuihost",
     d: "Elegí el mismo tipo (Paper con Paper, Forge con Forge) y la misma versión de Minecraft que tenías. Si cambiás de versión, el mundo puede no cargar bien.",
   },
   {

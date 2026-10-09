@@ -9,7 +9,7 @@ export default function Login() {
       <PageHeader
         eyebrow="Panel"
         title="Iniciar sesión"
-        sub="Tu cuenta y tus servidores se manejan desde el panel de ArcNode."
+        sub="Tu cuenta y tus servidores se manejan desde el panel de Changuihost."
         actions={PANEL_URL && <a className="btn btn-primary btn-lg" href={PANEL_URL}>Ir al panel</a>}
       />
       <div className="page-section">

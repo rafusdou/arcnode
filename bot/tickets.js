@@ -13,14 +13,15 @@ export const TICKET_CATEGORIES = [
   { id: "otro", label: "Otra consulta", emoji: "❓", description: "Cualquier otra cosa.", style: ButtonStyle.Secondary },
 ];
 
-const PICKER_MARKER = "arcnode-ticket-picker";
+const PICKER_MARKER = "changuihost-ticket-picker";
+const LEGACY_PICKER_MARKERS = ["arcnode-ticket-picker"];
 
 export function buildPickerMessage() {
   const list = TICKET_CATEGORIES.map((c) => `${c.emoji} **${c.label}** — ${c.description}`).join("\n");
 
   const embed = new EmbedBuilder()
-    .setColor(0x378add)
-    .setTitle("🎫 Soporte ArcNode")
+    .setColor(0xf2b33d)
+    .setTitle("🎫 Soporte Changuihost")
     .setDescription(`Elegí de qué se trata tu consulta y te abrimos un canal privado con el staff.\n\n${list}`)
     .setFooter({ text: PICKER_MARKER });
 
@@ -44,10 +45,17 @@ export async function ensurePickerMessage(client) {
   }
 
   const recent = await channel.messages.fetch({ limit: 20 }).catch(() => null);
-  const alreadyPosted = recent?.some(
-    (m) => m.author.id === client.user.id && m.embeds[0]?.footer?.text === PICKER_MARKER
-  );
-  if (alreadyPosted) return;
+  const mine = recent?.filter((m) => m.author.id === client.user.id) ?? [];
+  if (mine.some((m) => m.embeds[0]?.footer?.text === PICKER_MARKER)) return;
+
+  // The picker posted before the rebrand carries the old marker: update it in
+  // place instead of posting a second one next to it.
+  const legacy = mine.find((m) => LEGACY_PICKER_MARKERS.includes(m.embeds[0]?.footer?.text));
+  if (legacy) {
+    await legacy.edit(buildPickerMessage());
+    console.log(`  Mensaje de tickets actualizado en #${channel.name}`);
+    return;
+  }
 
   await channel.send(buildPickerMessage());
   console.log(`  Mensaje de tickets publicado en #${channel.name}`);
@@ -97,7 +105,7 @@ export async function createTicketChannel(interaction, categoryId) {
   });
 
   const embed = new EmbedBuilder()
-    .setColor(0x378add)
+    .setColor(0xf2b33d)
     .setTitle(`${category.emoji} ${category.label}`)
     .setDescription(`Hola ${user}, contanos qué necesitás y el staff te va a responder acá.${supportRoleId ? ` <@&${supportRoleId}>` : ""}`);
 

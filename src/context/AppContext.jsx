@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import { ARCNODE_I18N } from "../i18n.js";
+import { I18N } from "../i18n.js";
 
 const AppContext = createContext(null);
 
@@ -13,7 +13,7 @@ export function AppProvider({ children }) {
     document.documentElement.lang = lang;
   }, [theme, lang]);
 
-  const t = ARCNODE_I18N[lang] || ARCNODE_I18N.es;
+  const t = I18N[lang] || I18N.es;
 
   return (
     <AppContext.Provider value={{ lang, setLang, currency, setCurrency, theme, setTheme, t }}>

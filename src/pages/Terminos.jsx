@@ -22,11 +22,11 @@ export default function Terminos() {
         </div>
         <div className="legal-content">
           <h2 id="a">1. Aceptación</h2>
-          <p>Al crear un servidor en ArcNode aceptás estos términos. Si no estás de acuerdo con ellos, no uses el servicio.</p>
+          <p>Al crear un servidor en Changuihost aceptás estos términos. Si no estás de acuerdo con ellos, no uses el servicio.</p>
 
           <h2 id="b">2. El servicio</h2>
           <p>
-            ArcNode ofrece hosting de servidores de Minecraft Java Edition, administrados desde un panel
+            Changuihost ofrece hosting de servidores de Minecraft Java Edition, administrados desde un panel
             de control. No somos parte de Mojang ni de Microsoft. Minecraft es una marca de Mojang AB.
           </p>
 
@@ -42,14 +42,15 @@ export default function Terminos() {
           <h2 id="d">4. Plan gratis</h2>
           <p>
             El plan gratis es para probar el servicio y tiene recursos limitados. Los servidores del plan
-            gratis pueden mostrar mensajes de ArcNode y de patrocinadores en el chat del juego y en la
-            lista de servidores, y se apagan automáticamente cuando no hay jugadores conectados. Se puede
-            tener un servidor gratis por persona. Podemos cambiar las condiciones del plan gratis o dejar
+            gratis pueden mostrar mensajes de Changuihost y de patrocinadores en el chat del juego y en la
+            lista de servidores, y se apagan automáticamente cuando no hay jugadores conectados. Se prenden
+            desde su página de arranque, con una espera previa, y no desde el panel. Se puede tener un
+            servidor gratis por persona. Podemos cambiar las condiciones del plan gratis o dejar
             de ofrecerlo, avisando con anticipación.
           </p>
 
           <h2 id="e">5. Uso aceptable</h2>
-          <p>No podés usar ArcNode para:</p>
+          <p>No podés usar Changuihost para:</p>
           <ul>
             <li>Distribuir contenido ilegal, malware o phishing.</li>
             <li>Atacar otros servidores o redes (DDoS, escaneo de puertos, spam).</li>

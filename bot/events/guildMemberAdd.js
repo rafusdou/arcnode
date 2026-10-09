@@ -11,9 +11,9 @@ export async function onGuildMemberAdd(member) {
 
   const embed = new EmbedBuilder()
     .setColor(0x1d9e75)
-    .setTitle(`¡Bienvenido a ArcNode, ${member.user.username}! 🧊`)
+    .setTitle(`¡Bienvenido a Changuihost, ${member.user.username}!`)
     .setDescription(
-      "Servidores de Minecraft desde $2 USD/GB. Usá `/planes` para ver precios, `/status` para el estado de los servidores, o `/ticket` si necesitás ayuda." +
+      "Servidores de Minecraft a $1,80 USD por GB. Usá `/planes` para ver los precios y `/status` para el estado de los servidores. Si necesitás ayuda, abrí un ticket desde el canal de soporte." +
         (verifiedRoleId ? "\n\nApretá el botón para verificarte y desbloquear el resto del server." : "")
     )
     .setThumbnail(member.user.displayAvatarURL());

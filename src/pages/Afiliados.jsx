@@ -6,7 +6,7 @@ export default function Afiliados() {
       <PageHeader
         eyebrow="Referidos"
         title="El programa de referidos todavía no está abierto."
-        sub="Lo estamos armando. Si tenés una comunidad o un canal y te interesa recomendar ArcNode, escribinos por Discord."
+        sub="Lo estamos armando. Si tenés una comunidad o un canal y te interesa recomendar Changuihost, escribinos por Discord."
       />
       <div className="page-section">
         <div className="legal-content">

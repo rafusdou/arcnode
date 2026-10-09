@@ -4,12 +4,18 @@ export default function About() {
   return (
     <>
       <PageHeader
-        eyebrow="Sobre ArcNode"
+        eyebrow="Sobre Changuihost"
         title="Somos dos personas haciendo hosting de Minecraft."
-        sub="ArcNode arrancó en 2026, en Argentina."
+        sub="Changuihost arrancó en 2026, en Argentina."
       />
       <div className="page-section">
         <div className="legal-content">
+          <h2>¿Por qué Changuihost?</h2>
+          <p>
+            En Argentina, "dar changüí" es darle a alguien una ventaja o un poquito de más. Es lo que
+            queremos ser: un hosting que te da un poco más de lo que pagás, empezando por un plan gratis
+            para que pruebes sin poner un peso.
+          </p>
           <h2>Por qué lo hacemos</h2>
           <p>
             Queríamos un hosting donde el precio fuera una cuenta simple: cuántos GB de RAM querés y

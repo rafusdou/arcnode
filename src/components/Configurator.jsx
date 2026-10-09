@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { useApp } from "../context/AppContext.jsx";
-import { ARCNODE_PLANS } from "../data/plans.js";
+import { PLANS } from "../data/plans.js";
 import { fmtPrice } from "../utils/currency.js";
 
 const MIN_RAM = 1;
@@ -8,7 +8,7 @@ const MAX_RAM = 25;
 
 export default function Configurator({ ram, onRamChange }) {
   const { t, currency } = useApp();
-  const plan = ARCNODE_PLANS.find((p) => p.ram === ram);
+  const plan = PLANS.find((p) => p.ram === ram);
   const fill = ((ram - MIN_RAM) / (MAX_RAM - MIN_RAM)) * 100;
 
   return (

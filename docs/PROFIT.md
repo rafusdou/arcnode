@@ -1,4 +1,4 @@
-# ArcNode.cc — Cómo funciona el profit
+# Changuihost — Cómo funciona el profit
 
 Este documento explica, con números concretos, de dónde sale la plata y
 cuánto queda libre en cada escalón del negocio. La idea es que cualquiera del
@@ -15,14 +15,14 @@ Comparado con el mercado (investigado en octubre 2026):
 | Proveedor | Precio por GB |
 |---|---|
 | PebbleHost (Budget, sin NVMe) | $1.00 |
-| **ArcNode** | **$1.80** |
+| **Changuihost** | **$1.80** |
 | PebbleHost (Premium, con NVMe) | $2.25 |
 | Shockbyte | ~$2.50–4.00 |
 | BisectHosting (Budget) | $2.99 |
 | Apex Hosting | $3.25–3.75 |
 | BisectHosting (Premium NVMe) | $4.99 |
 
-ArcNode queda más barato que todos excepto el tier más pelado de PebbleHost,
+Changuihost queda más barato que todos excepto el tier más pelado de PebbleHost,
 y ningún plan pago limita la cantidad de jugadores. Lo que todavía no
 tenemos y la competencia sí: protección anti-DDoS. No se promete en la web
 hasta que esté (ver la propuesta de anti-DDoS con la VPS).
@@ -65,7 +65,7 @@ al punto de que todo lague, sino no dejar recursos pagos completamente
 ociosos.
 
 ### b) Los costos fijos no se repiten por cliente
-El dominio ($4,98 USD/año), el panel (Pterodactyl, gratis), el sitio
+El dominio (US$2,40 el primer año y US$8,55 por año después, en Porkbun), el panel (Pterodactyl, gratis), el sitio
 (Vercel, gratis en el plan actual) — esos costos existen una sola vez, sin
 importar si hay 1 cliente o 100. Cuanta más gente se suma, más se diluyen
 esos costos fijos por cabeza.
@@ -113,7 +113,7 @@ Estos no se ofrecen hasta resolver lo que les falta.
 
 | Agregado | Qué falta |
 |---|---|
-| Subdominio (`tuserver.arcnode.cc`) | Pasar el dominio a Cloudflare. Después el backend crea un registro SRV por API apuntando a la IP y el puerto del server |
+| Subdominio (`tuserver.changuihost.cc`) | Pasar el dominio a Cloudflare. Después el backend crea un registro SRV por API apuntando a la IP y el puerto del server |
 | IP dedicada | Una VPS con IPs extra, que el proveedor cobra aparte. Hoy todo sale de una sola IP |
 | Anti-DDoS reforzado | Primero tiene que existir la protección base (proveedor con mitigación + TCPShield) |
 | Backups fuera del nodo | Un almacenamiento externo compatible con S3. Pterodactyl ya sabe guardar backups ahí |

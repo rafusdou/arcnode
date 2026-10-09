@@ -26,7 +26,7 @@ export default function Privacidad() {
             <li>Los archivos, la configuración y los registros (logs) de tu servidor.</li>
             <li>La IP desde la que entrás al panel, que el panel registra por seguridad.</li>
           </ul>
-          <p>Los datos de tu tarjeta no se guardan en ArcNode.</p>
+          <p>Los datos de tu tarjeta no se guardan en Changuihost.</p>
 
           <h2 id="b">2. Para qué los usamos</h2>
           <p>

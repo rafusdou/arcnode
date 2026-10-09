@@ -1,8 +1,8 @@
-# ArcNode.cc — Documento de proyecto
+# Changuihost — Documento de proyecto
 
 ## 1. Qué es
 
-ArcNode.cc es un servicio de hosting de servidores de Minecraft. La propuesta
+Changuihost es un servicio de hosting de servidores de Minecraft. La propuesta
 es simple y se vende así: **pagás por la RAM que usás, a $1,80 USD por GB**, sin
 planes rígidos ni letra chica. El usuario entra al sitio, elige cuánta RAM
 necesita (con una calculadora en vivo), paga, y a los segundos tiene su
@@ -90,7 +90,7 @@ evaluadas:
 | Ítem | Costo aproximado |
 |---|---|
 | VPS Hetzner (nodo chico, varios servidores por nodo) | ~€5-20/mes según cuántos clientes |
-| Dominio (arcnode.cc) | $4.98 USD/año |
+| Dominio (changuihost.cc) | US$2,40 el primer año, después US$8,55 por año (Porkbun) |
 | Hosting del sitio (Vercel, plan gratuito para empezar) | $0 |
 | Panel Pterodactyl | $0 (open source) |
 
@@ -132,7 +132,7 @@ verdad desde el día uno.
 
 ### Canales (ordenados por costo/esfuerzo)
 
-1. **Discord propio** (ya existe el bot): el servidor de Discord de ArcNode
+1. **Discord propio** (ya existe el bot): el servidor de Discord de Changuihost
    es el centro de comunidad — ahí la gente ve el estado de los servidores,
    pide soporte, y es el lugar más fácil de mantener activo sin gastar en
    ads.
@@ -141,11 +141,11 @@ verdad desde el día uno.
    hosting): publicar donde la gente *ya* está buscando esto, en vez de
    intentar atraerla de cero.
 3. **Programa de afiliados** (ya hay una página `/afiliados` en el sitio):
-   dar un % de comisión a quien recomiende ArcNode — los primeros
+   dar un % de comisión a quien recomiende Changuihost — los primeros
    referentes naturales son dueños de servidores de Minecraft con su propia
    audiencia (streamers chicos, admins de comunidades).
 4. **Contenido técnico/comparativo**: artículos o videos cortos comparando
-   precio real ArcNode vs. competidores (muchos hosts de Minecraft cobran
+   precio real Changuihost vs. competidores (muchos hosts de Minecraft cobran
    planes fijos que terminan siendo más caros por GB real que $2/GB).
 5. **SEO básico**: el sitio ya tiene páginas de "Planes Minecraft",
    "Modpacks", "Migrar" — esas son palabras que la gente busca en Google
@@ -156,7 +156,7 @@ verdad desde el día uno.
 > "Pagás por la RAM que usás. Nada más."
 
 Todo el material de promoción debería insistir en esto, porque es lo que
-diferencia a ArcNode de la mayoría de hosts (que venden "planes" con nombres
+diferencia a Changuihost de la mayoría de hosts (que venden "planes" con nombres
 de fantasía y letra chica).
 
 ### Secuencia sugerida de lanzamiento

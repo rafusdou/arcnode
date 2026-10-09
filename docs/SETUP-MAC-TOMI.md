@@ -1,4 +1,4 @@
-# Preparar tu MacBook para ArcNode — guía para Tomi
+# Preparar tu MacBook para Changuihost — guía para Tomi
 
 Che Tomi, esto es para dejar tu MacBook Pro 2012 (i7, 16GB RAM) lista para que
 corra servidores de Minecraft de prueba — la vamos a usar para testear entre
@@ -76,6 +76,6 @@ Después necesito que me pases:
 - Un **usuario y contraseña** con los que pueda conectarme por SSH.
 
 Con eso, de ahí en adelante sigo yo — instalo todo lo necesario (Wings, lo
-que conecta esta máquina con el panel de ArcNode) sin que tengas que hacer
+que conecta esta máquina con el panel de Changuihost) sin que tengas que hacer
 nada técnico más. Cualquier cosa rara en el medio, avisale a Rafa y lo
 vemos juntos.

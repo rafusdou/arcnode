@@ -1,4 +1,4 @@
-# ArcNode.cc — Cómo vamos a promocionar
+# Changuihost — Cómo vamos a promocionar
 
 Este documento es el plan concreto de promoción: a quién le hablamos, por
 dónde, con qué mensaje, y en qué orden. La idea es que sirva como lista de
@@ -42,11 +42,11 @@ Mensajes secundarios, según a quién le hablemos:
   para confirmar que el producto aguanta antes de mostrárselo a nadie más.
 
 ### Fase 2 — Círculo cercano
-- Compartir el link de la demo (`arcnode-cc.vercel.app`, o `arcnode.cc`
+- Compartir el link de la demo (`arcnode-cc.vercel.app`, o `changuihost.cc`
   cuando esté conectado el dominio) con gente que conocemos que juega
   Minecraft o tiene un server. Pedirles feedback honesto, no solo que
   "les guste".
-- Nuestro propio servidor de Discord de ArcNode: hoy ya tiene el bot
+- Nuestro propio servidor de Discord de Changuihost: hoy ya tiene el bot
   funcionando (estado de servers, info de planes, tickets de soporte). Es
   el lugar donde cualquiera que se interese va a terminar preguntando algo
   — hay que mantenerlo activo desde ya, aunque sea chico.
@@ -75,7 +75,7 @@ atraerla de cero:
   "Modpacks", "Migrar" — son búsquedas reales de gente que ya decidió que
   quiere un server. Hay que asegurarse de que Google las indexe bien
   (título, descripción, contenido útil — no solo relleno).
-- Más adelante: un artículo o video corto comparando precio real ArcNode
+- Más adelante: un artículo o video corto comparando precio real Changuihost
   vs. competencia (los números ya están armados en `PROFIT.md`).
 
 ## 4. Qué NO vamos a hacer (por ahora)

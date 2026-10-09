@@ -3,7 +3,7 @@ import { listServers, getServerResources } from "../pterodactyl.js";
 
 export const data = new SlashCommandBuilder()
   .setName("status")
-  .setDescription("Estado en vivo de los servidores en el panel de ArcNode");
+  .setDescription("Estado en vivo de los servidores en el panel de Changuihost");
 
 const STATE_LABEL = {
   running: "🟢 Online",
@@ -38,8 +38,8 @@ export async function execute(interaction) {
   );
 
   const embed = new EmbedBuilder()
-    .setColor(0x378add)
-    .setTitle("📡 Estado de servidores — ArcNode")
+    .setColor(0xf2b33d)
+    .setTitle("📡 Estado de servidores — Changuihost")
     .setDescription(rows.join("\n"))
     .setFooter({ text: servers.length > 15 ? `Mostrando 15 de ${servers.length} servidores` : `${servers.length} servidor(es)` })
     .setTimestamp();

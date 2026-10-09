@@ -29,7 +29,7 @@ export default function PanelDemo() {
       <PageHeader
         eyebrow="Panel"
         title="Así se ve el panel"
-        sub="Es Pterodactyl con los colores de ArcNode. Está en inglés. Esto es una vista de ejemplo: la consola de abajo no está conectada a ningún servidor."
+        sub="Es Pterodactyl con los colores de Changuihost. Está en inglés. Esto es una vista de ejemplo: la consola de abajo no está conectada a ningún servidor."
       />
       <div className="page-section">
         <div className="demo-frame">

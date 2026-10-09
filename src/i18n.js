@@ -36,7 +36,7 @@ const FOOTER_COLS_EN = [
   ] },
 ];
 
-export const ARCNODE_I18N = {
+export const I18N = {
   es: {
     nav: { prices: "Precios", includes: "Qué incluye", faq: "Preguntas", login: "Iniciar sesión", cta: "Crear servidor" },
     hero: {
@@ -60,7 +60,7 @@ export const ARCNODE_I18N = {
     },
     includes: {
       title: "Qué incluye",
-      intro: "ArcNode lo hacemos dos personas desde Argentina. Esto es lo que trae cada servidor, sea del plan que sea.",
+      intro: "Changuihost lo hacemos dos personas desde Argentina. Esto es lo que trae cada servidor, sea del plan que sea.",
       items: [
         { t: "Un panel de verdad", d: "Consola en vivo, administrador de archivos, reinicios programados y subusuarios con permisos. Es Pterodactyl, un panel open source muy usado en el rubro, con nuestros colores." },
         { t: "Paper, Vanilla o Forge", d: "Lo elegís al crear el servidor, junto con la versión de Minecraft: de la 1.16.5 a la última." },
@@ -109,7 +109,7 @@ export const ARCNODE_I18N = {
     footer: {
       blurb: "Hosting de servidores de Minecraft, hecho en Argentina.",
       cols: FOOTER_COLS_ES,
-      copy: "© 2026 ArcNode",
+      copy: "© 2026 Changuihost",
       disclaimer: "No estamos afiliados a Mojang ni a Microsoft.",
     },
   },
@@ -136,7 +136,7 @@ export const ARCNODE_I18N = {
     },
     includes: {
       title: "What's included",
-      intro: "ArcNode is run by two people in Argentina. This is what every server comes with, whatever the plan.",
+      intro: "Changuihost is run by two people in Argentina. This is what every server comes with, whatever the plan.",
       items: [
         { t: "A real panel", d: "Live console, file manager, scheduled restarts and subusers with permissions. It's Pterodactyl, an open source panel widely used by hosts, in our colors." },
         { t: "Paper, Vanilla or Forge", d: "You choose when you create the server, along with the Minecraft version: anything from 1.16.5 to the latest." },
@@ -185,7 +185,7 @@ export const ARCNODE_I18N = {
     footer: {
       blurb: "Minecraft server hosting, made in Argentina.",
       cols: FOOTER_COLS_EN,
-      copy: "© 2026 ArcNode",
+      copy: "© 2026 Changuihost",
       disclaimer: "Not affiliated with Mojang or Microsoft.",
     },
   },

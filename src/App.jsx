@@ -13,6 +13,7 @@ import About from "./pages/About.jsx";
 import Afiliados from "./pages/Afiliados.jsx";
 import Terminos from "./pages/Terminos.jsx";
 import Privacidad from "./pages/Privacidad.jsx";
+import Arrancar from "./pages/Arrancar.jsx";
 
 export default function App() {
   return (
@@ -31,6 +32,7 @@ export default function App() {
         <Route path="/afiliados" element={<Afiliados />} />
         <Route path="/terminos" element={<Terminos />} />
         <Route path="/privacidad" element={<Privacidad />} />
+        <Route path="/arrancar/:identifier" element={<Arrancar />} />
         {/* Old URLs from pages that were removed, so existing links don't 404. */}
         <Route path="/signup" element={<Navigate to="/#calc" replace />} />
         <Route path="/tutoriales" element={<Navigate to="/docs" replace />} />

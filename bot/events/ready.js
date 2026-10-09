@@ -1,11 +1,12 @@
 import { REST, Routes } from "discord.js";
 import { ensurePickerMessage } from "../tickets.js";
+import { startFreePlanWorker } from "../freeplan.js";
 
 // Registers all slash commands to every guild the bot is currently in.
 // Guild-scoped registration is instant (global registration can take up to
 // an hour to propagate), which matters a lot while iterating on the bot.
 export async function onReady(client) {
-  console.log(`ArcNode bot conectado como ${client.user.tag}`);
+  console.log(`Changuihost bot conectado como ${client.user.tag}`);
 
   const rest = new REST().setToken(process.env.DISCORD_TOKEN);
   const body = [...client.commands.values()].map((c) => c.data.toJSON());
@@ -21,5 +22,6 @@ export async function onReady(client) {
 
   await ensurePickerMessage(client);
 
-  client.user.setActivity("arcnode.cc · /planes");
+  client.user.setActivity("changuihost.cc · /planes");
+  startFreePlanWorker();
 }

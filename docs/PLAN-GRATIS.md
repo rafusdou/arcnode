@@ -6,7 +6,7 @@ cómo se implementa cada cosa.
 
 ## 1. La idea
 
-El plan gratis (internamente "Piedra") es la vidriera de ArcNode. Funciona de
+El plan gratis (internamente "Piedra") es la vidriera de Changuihost. Funciona de
 verdad, pero:
 
 - tiene límites que se notan cuando el server empieza a crecer,
@@ -21,7 +21,7 @@ con datos reales de su propio server, por qué le conviene pasar a un plan pago.
 | Dónde | Qué dice sobre los límites |
 |---|---|
 | Home, tabla de planes, checkout | Nada. Se presenta como "un servidor chico para probar". |
-| Términos y condiciones | Una línea: el plan gratis puede mostrar mensajes de ArcNode y de patrocinadores, y se apaga si no hay jugadores. |
+| Términos y condiciones | Una línea: el plan gratis puede mostrar mensajes de Changuihost y de patrocinadores, y se apaga si no hay jugadores. |
 
 Lo de Términos no es opcional: la Ley de Defensa del Consumidor pide informar
 las condiciones del servicio aunque sea gratis, y nos cubre si alguien
@@ -45,7 +45,9 @@ del juego.
 | Tipo de server | Paper o Vanilla | Forge no arranca bien con 1 GB; el checkout no lo ofrece y el backend lo rechaza | Ya está |
 | Servidores gratis por cuenta | 1 | El backend rechaza un segundo plan gratis para el mismo email | Ya está |
 | Checkout sin tarjeta | — | El checkout del plan gratis no pide medio de pago y dice "Soporte: Básico" | Ya está |
-| Apagado por inactividad | 15 min sin jugadores | Worker (ver sección 5) | Falta |
+| Arranque | Solo desde la página de arranque, con 1 minuto de espera | El cliente es subusuario sin permiso de prender (ver sección 5) | Ya está |
+| Boost de RAM | 2 GB durante 1 hora a cambio de un anuncio | Página de arranque + worker del bot (ver sección 5) | Ya está |
+| Apagado por inactividad | 15 min sin jugadores | Worker (ver sección 6) | Falta |
 
 Los límites que ya están salen solos de cómo está armado el backend. Los que
 faltan se detallan abajo.
@@ -55,21 +57,21 @@ faltan se detallan abajo.
 ### 3.1 MOTD (el texto debajo del nombre)
 
 ```
-ArcNode.cc · Servidor gratis
-Creá el tuyo en arcnode.cc
+Changuihost · Servidor gratis
+Creá el tuyo en changuihost.cc
 ```
 
 Con colores (códigos `§`):
 
 ```
-§b§lArcNode.cc §r§7· §fServidor gratis
-§7Creá el tuyo en §barcnode.cc
+§6§lChanguihost §r§7· §fServidor gratis
+§7Creá el tuyo en §6changuihost.cc
 ```
 
 En `server.properties` el `§` va escapado y el salto de línea es `\n`:
 
 ```
-motd=§b§lArcNode.cc §r§7· §fServidor gratis\n§7Creá el tuyo en §barcnode.cc
+motd=§6§lChanguihost §r§7· §fServidor gratis\n§7Creá el tuyo en §6changuihost.cc
 ```
 
 **Cómo se fuerza (sin que el dueño lo pueda cambiar):** con eggs propios para
@@ -87,7 +89,7 @@ límites; si lo ponés también acá, no pasa nada):
       "server-ip": "0.0.0.0",
       "server-port": "{{server.build.default.port}}",
       "query.port": "{{server.build.default.port}}",
-      "motd": "§b§lArcNode.cc §r§7· §fServidor gratis\\n§7Creá el tuyo en §barcnode.cc",
+      "motd": "§6§lChanguihost §r§7· §fServidor gratis\\n§7Creá el tuyo en §6changuihost.cc",
       "max-players": "3"
     }
   }
@@ -103,11 +105,11 @@ eggs (en vez de los normales) cuando el plan es gratis: en `SERVER_TYPES` de
 
 - PNG de **64×64 px** (Minecraft no acepta otro tamaño), llamado
   `server-icon.png` en la raíz del server.
-- Diseño: el logo de ArcNode sobre fondo oscuro y una franja abajo que diga
-  **FREE** en blanco sobre azul `#378ADD`. Tiene que leerse a 64 px, así que
+- Diseño: el logo de Changuihost sobre fondo oscuro y una franja abajo que diga
+  **FREE** en letras oscuras sobre amarillo `#F2B33D`. Tiene que leerse a 64 px, así que
   nada de texto chico.
 - Se publica en el sitio como `public/free-server-icon.png` (queda en
-  `https://arcnode.cc/free-server-icon.png`).
+  `https://changuihost.cc/free-server-icon.png`).
 
 **Cómo se fuerza:** se descarga en cada arranque con un prefijo en el
 comando de inicio, igual que el truco que ya usamos para la EULA
@@ -116,7 +118,7 @@ inicio desde su panel, solo un admin.
 
 ```js
 const FREE_ICON_PREFIX =
-  '$(curl -fsSL -o server-icon.png https://arcnode.cc/free-server-icon.png) ';
+  '$(curl -fsSL -o server-icon.png https://changuihost.cc/free-server-icon.png) ';
 // startup: FREE_ICON_PREFIX + EULA_PREFIX + egg.startup
 ```
 
@@ -126,7 +128,7 @@ script de instalación del egg gratis.
 
 ## 4. Mensajes en el chat
 
-Todos los mensajes salen con el prefijo **`[ArcNode]`** en celeste, para que
+Todos los mensajes salen con el prefijo **`[Changuihost]`** en dorado (el `gold` de Minecraft, lo más parecido al amarillo de la marca), para que
 quede claro que no los escribe el dueño ni un jugador. Los de patrocinadores
 llevan **`[Sponsor]`**.
 
@@ -155,10 +157,10 @@ pendiente.
 
 | id | Mensaje |
 |---|---|
-| `marca-1` | Este servidor está alojado gratis en **ArcNode.cc**. ¿Querés uno propio? **arcnode.cc** |
+| `marca-1` | Este servidor está alojado gratis en **Changuihost**. ¿Querés uno propio? **changuihost.cc** |
 | `marca-2` | ¿Te gusta este server? El dueño puede pasarlo a un plan pago desde **{precio_1gb}/mes** y sacar estos mensajes. |
-| `marca-3` | Los planes pagos de ArcNode quedan prendidos 24/7, aunque no haya nadie conectado. |
-| `marca-4` | Con **2 GB** entran hasta 10 jugadores y podés usar más plugins. Planes en **arcnode.cc** |
+| `marca-3` | Los planes pagos de Changuihost quedan prendidos 24/7, aunque no haya nadie conectado. |
+| `marca-4` | Con **2 GB** entran hasta 10 jugadores y podés usar más plugins. Planes en **changuihost.cc** |
 
 `{precio_1gb}` se completa desde `src/data/plans.js` (el worker lo importa),
 así el precio de los mensajes nunca queda desactualizado respecto de la web.
@@ -191,7 +193,7 @@ alguien conectado.
   {
     "id": "ejemplo-tienda",
     "marca": "TiendaEjemplo",
-    "texto": "20% off en remeras gamer con el código ARCNODE",
+    "texto": "20% off en remeras gamer con el código CHANGUI",
     "url": "https://tiendaejemplo.com",
     "desde": "2026-11-01",
     "hasta": "2026-11-30"
@@ -205,7 +207,7 @@ Los mensajes se mandan con `tellraw`, que permite colores y links que se
 pueden clickear. Ejemplo de `marca-1`:
 
 ```
-tellraw @a ["",{"text":"[ArcNode] ","color":"aqua","bold":true},{"text":"Este servidor está alojado gratis en ","color":"gray"},{"text":"ArcNode.cc","color":"white","bold":true},{"text":". ¿Querés uno propio? ","color":"gray"},{"text":"arcnode.cc","color":"aqua","underlined":true,"clickEvent":{"action":"open_url","value":"https://arcnode.cc/?utm_source=free_server&utm_medium=chat&utm_campaign=marca-1"}}]
+tellraw @a ["",{"text":"[Changuihost] ","color":"gold","bold":true},{"text":"Este servidor está alojado gratis en ","color":"gray"},{"text":"Changuihost","color":"white","bold":true},{"text":". ¿Querés uno propio? ","color":"gray"},{"text":"changuihost.cc","color":"gold","underlined":true,"clickEvent":{"action":"open_url","value":"https://changuihost.cc/?utm_source=free_server&utm_medium=chat&utm_campaign=marca-1"}}]
 ```
 
 **Ojo con la versión:** desde Minecraft **1.21.5** cambió el formato de los
@@ -214,19 +216,72 @@ links. En vez de `"clickEvent":{"action":"open_url","value":"..."}` va
 eligió el cliente (está en las variables del server) y arma el mensaje en el
 formato que corresponde. Si la versión es `latest`, se usa el formato nuevo.
 
-## 5. Implementación: el worker
+## 5. Página de arranque y boost de RAM (ya implementado)
+
+Los servidores gratis no se prenden desde el panel: se prenden desde su
+**página de arranque** (`changuihost.cc/arrancar/<id>?t=<token>`). El link se
+muestra al terminar el checkout gratis y el cliente lo tiene que guardar.
+
+**Cómo funciona para el cliente:**
+
+1. Abre su link y toca **Prender servidor**.
+2. Espera **1 minuto** con una cuenta regresiva. Ahí ve que con un plan pago
+   arrancaría al instante.
+3. Mientras espera, puede tocar **Mirar anuncio**: un anuncio de **30
+   segundos**. Si lo mira entero, el servidor arranca con **2 GB en vez de 1
+   GB durante 1 hora**.
+4. Cuando termina la espera (y el anuncio, si eligió verlo), el servidor
+   arranca solo y la página muestra la dirección para conectarse.
+5. Cuando se cumple la hora, el bot avisa en el chat del juego, espera un
+   minuto, lo apaga, le vuelve a poner 1 GB y lo prende de nuevo.
+
+**Por qué no se puede hacer trampa:**
+
+- El servidor gratis es de una cuenta de servicio (`gratis@changuihost.cc`).
+  El cliente entra como subusuario: tiene consola, archivos y puede apagarlo,
+  pero no tiene permiso de prender ni reiniciar, ni de crear tareas
+  programadas (que también podrían prenderlo).
+- La espera y el anuncio se controlan en el backend, no en el navegador: la
+  página recibe "tickets" firmados con la hora de inicio, y el backend se
+  fija que haya pasado el tiempo antes de prender o de dar el boost.
+- El link de arranque está firmado por servidor: sin el token correcto no se
+  puede ni ver el estado.
+
+**Detalles técnicos:** la lógica está en `server/freeplan.js`. Los datos del
+plan gratis (de qué cliente es, hasta cuándo dura el boost) se guardan en el
+campo `external_id` del servidor, que el cliente no ve (`free:<id del
+cliente>;boost=<vencimiento>`). Los tiempos se pueden cambiar con las
+variables de entorno `FREE_QUEUE_SECONDS`, `FREE_AD_SECONDS` y
+`FREE_BOOST_MINUTES` (por defecto 60, 30 y 60).
+
+**Importante:** el boost se termina gracias al bot de Discord. **Si el bot no
+está corriendo, el boost no se termina** y el cliente se queda con 2 GB hasta
+que el bot vuelva a prenderse. Lo mismo para dar acceso al panel: el cliente
+recibe permiso recién cuando termina la instalación, y eso lo hace la página
+de arranque o el bot.
+
+**El anuncio de hoy es nuestro:** el espacio muestra una promo de los planes
+pagos. Cuando haya sponsors, su anuncio va en ese mismo lugar (componente
+`AdSlot` en `src/pages/Arrancar.jsx`).
+
+**Ojo con la capacidad:** cada boost ocupa 1 GB más del nodo durante una hora.
+Si muchos servidores gratis piden boost a la vez, puede faltar RAM para los
+planes pagos. Cuando haya más uso, conviene limitar cuántos boosts puede haber
+al mismo tiempo.
+
+## 6. Implementación: el worker
 
 Los mensajes, el apagado por inactividad y los contextuales necesitan un
 proceso que corra todo el tiempo. Va dentro del bot de Discord, que ya corre
-24/7 en la misma máquina que el panel y ya habla con la API de Pterodactyl
-(`bot/pterodactyl.js`). Archivo nuevo: `bot/freeplan.js`, arrancado desde
-`bot/index.js` cuando el bot está listo.
+24/7 en la misma máquina que el panel y ya habla con la API de Pterodactyl.
+El archivo `bot/freeplan.js` ya existe y corre cada minuto: hoy da acceso a
+los clientes cuando termina la instalación y termina los boosts vencidos. Lo
+que sigue (mensajes y apagado por inactividad) se suma ahí.
 
 Cada 60 segundos:
 
 1. Lista los servidores (Application API) y se queda con los del plan
-   gratis. Cada servidor guarda su plan en la descripción (`ArcNode plan:
-   Piedra`), así que alcanza con filtrar por eso.
+   gratis: los que tienen `external_id` empezando con `free:`.
 2. Para cada uno, pide los recursos (Client API,
    `GET /api/client/servers/{id}/resources`): estado y memoria usada.
 3. Si está prendido, consulta cuántos jugadores hay con un *Server List
@@ -242,11 +297,11 @@ El estado (último mensaje mandado, minutos sin jugadores, cuándo arrancó)
 vive en memoria. Si el bot se reinicia se pierde, y lo peor que pasa es que
 un mensaje sale unos minutos antes o después.
 
-## 6. Más adelante (opcional)
+## 7. Más adelante (opcional)
 
-- **Plugin propio para Paper** (`ArcNodeFree.jar`), descargado en cada
+- **Plugin propio para Paper** (`ChanguihostFree.jar`), descargado en cada
   arranque igual que el ícono. Permite cosas que con comandos de consola no
-  se pueden: cartel en la lista de jugadores (Tab) que diga "ArcNode.cc · plan
+  se pueden: cartel en la lista de jugadores (Tab) que diga "Changuihost · plan
   gratis", mensaje de bienvenida a cada jugador que entra, y un aviso al
   dueño (por su nombre de usuario de Minecraft) cuando el server se llena. No
   sirve para Vanilla.

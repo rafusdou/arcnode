@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
-import { ARCNODE_PLANS } from "../data/plans.js";
+import { PLANS } from "../data/plans.js";
 import { detectCardBrand, formatCardNumber, formatExpiry, isExpiryValid, isValidLength } from "../utils/card.js";
 
 const SERVER_TYPES = [
@@ -11,7 +11,39 @@ const SERVER_TYPES = [
 
 const MC_VERSIONS = ["latest", "1.21.4", "1.20.4", "1.19.4", "1.18.2", "1.16.5"];
 
-function SuccessScreen({ result, isFree }) {
+function FreeSuccessScreen({ result }) {
+  const path = `/arrancar/${result.start.identifier}?t=${encodeURIComponent(result.start.token)}`;
+  const fullUrl = window.location.origin + path;
+  const [copied, setCopied] = useState(false);
+  const copy = () => navigator.clipboard?.writeText(fullUrl).then(() => setCopied(true));
+
+  return (
+    <div className="free-done">
+      <div className="checkout-card">
+        <h1>Tu servidor gratis está listo</h1>
+        <p className="free-done-sub">
+          <strong>{result.server.name}</strong> ({result.server.type} {result.server.version}) se está instalando.
+          Los servidores gratis se prenden desde su página de arranque: guardá este link, lo vas a usar
+          cada vez que quieras jugar.
+        </p>
+        <div className="start-link">
+          <code>{fullUrl}</code>
+          <button type="button" className="btn btn-outline" onClick={copy}>{copied ? "Copiado" : "Copiar"}</button>
+        </div>
+        <Link className="btn btn-primary btn-block btn-lg" to={path}>Ir a prender mi servidor</Link>
+
+        <h3>Tu cuenta del panel</h3>
+        <p className="free-done-note">Para la consola y los archivos del servidor.</p>
+        <div className="summary-line"><span>Panel</span><strong>{result.panel.url}</strong></div>
+        <div className="summary-line"><span>Email</span><strong>{result.panel.email}</strong></div>
+        <div className="summary-line"><span>Contraseña</span><strong>{result.panel.password}</strong></div>
+        <div className="summary-line"><span>Dirección para conectarte</span><strong className="mono">{result.server.ip}:{result.server.port}</strong></div>
+      </div>
+    </div>
+  );
+}
+
+function SuccessScreen({ result }) {
   const [running, setRunning] = useState(false);
   const pollRef = useRef(null);
 
@@ -43,7 +75,7 @@ function SuccessScreen({ result, isFree }) {
         }}>
           <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6L9 17l-5-5" /></svg>
         </div>
-        <h1 style={{ fontSize: 26, margin: "0 0 8px" }}>{isFree ? "¡Tu servidor está en camino!" : "¡Pago aprobado!"}</h1>
+        <h1 style={{ fontSize: 26, margin: "0 0 8px" }}>¡Pago aprobado!</h1>
         <p style={{ color: "var(--muted)", margin: "0 0 32px" }}>
           Tu servidor <strong style={{ color: "var(--text-strong)" }}>{result.server.name}</strong> ({result.server.plan} · {result.server.type} {result.server.version}) ya está siendo creado.
         </p>
@@ -83,7 +115,7 @@ function SuccessScreen({ result, isFree }) {
 export default function Checkout() {
   const [params] = useSearchParams();
   const planName = params.get("plan") || "Blaze";
-  const plan = ARCNODE_PLANS.find((p) => p.name === planName) || ARCNODE_PLANS.find((p) => p.name === "Blaze");
+  const plan = PLANS.find((p) => p.name === planName) || PLANS.find((p) => p.name === "Blaze");
   const isFree = !!plan.free;
   // Forge doesn't boot reliably on the free plan's resources, so it's not offered there.
   const serverTypes = isFree ? SERVER_TYPES.filter((t) => t.value !== "forge") : SERVER_TYPES;
@@ -198,7 +230,7 @@ export default function Checkout() {
   };
 
   if (step === "success" && result) {
-    return <SuccessScreen result={result} isFree={isFree} />;
+    return result.start ? <FreeSuccessScreen result={result} /> : <SuccessScreen result={result} />;
   }
 
   if (step === "processing") {
@@ -206,7 +238,7 @@ export default function Checkout() {
       <div style={{ maxWidth: 480, margin: "0 auto", padding: "120px 40px", textAlign: "center" }}>
         <div style={{
           width: 48, height: 48, borderRadius: "50%", margin: "0 auto 28px",
-          border: "3px solid var(--border)", borderTopColor: "var(--blue)",
+          border: "3px solid var(--border)", borderTopColor: "var(--accent)",
           animation: "spin 0.8s linear infinite",
         }} />
         <style>{"@keyframes spin { to { transform: rotate(360deg); } }"}</style>
@@ -236,14 +268,14 @@ export default function Checkout() {
           <div className="checkout-card">
             <h3>Datos del servidor</h3>
             <div className="input-row">
-              <div className="input"><label>Nombre del servidor</label><input type="text" placeholder="MiServerEpico" value={form.serverName} onChange={set("serverName")} /></div>
-              <div className="input"><label>Tipo de servidor</label>
-                <select value={form.serverType} onChange={set("serverType")}>
+              <div className="input"><label htmlFor="co-server-name">Nombre del servidor</label><input id="co-server-name" type="text" placeholder="MiServerEpico" value={form.serverName} onChange={set("serverName")} /></div>
+              <div className="input"><label htmlFor="co-server-type">Tipo de servidor</label>
+                <select id="co-server-type" value={form.serverType} onChange={set("serverType")}>
                   {serverTypes.map((t) => <option key={t.value} value={t.value}>{t.label}</option>)}
                 </select>
               </div>
-              <div className="input"><label>Versión de Minecraft</label>
-                <select value={form.minecraftVersion} onChange={set("minecraftVersion")}>
+              <div className="input"><label htmlFor="co-version">Versión de Minecraft</label>
+                <select id="co-version" value={form.minecraftVersion} onChange={set("minecraftVersion")}>
                   {MC_VERSIONS.map((v) => <option key={v} value={v}>{v === "latest" ? "Última (recomendado)" : v}</option>)}
                 </select>
               </div>
@@ -256,14 +288,14 @@ export default function Checkout() {
           </div>
 
           <div className="checkout-card">
-            <h3>Creá tu cuenta ArcNode</h3>
+            <h3>Creá tu cuenta Changuihost</h3>
             <div className="input-row" style={{ gridTemplateColumns: "1fr 1fr" }}>
-              <div className="input"><label>Nombre</label><input type="text" required value={form.firstName} onChange={set("firstName")} /></div>
-              <div className="input"><label>Apellido</label><input type="text" value={form.lastName} onChange={set("lastName")} /></div>
-              <div className="input" style={{ gridColumn: "1 / -1" }}><label>Email</label><input type="email" required value={form.email} onChange={set("email")} /></div>
+              <div className="input"><label htmlFor="co-first-name">Nombre</label><input id="co-first-name" type="text" required value={form.firstName} onChange={set("firstName")} /></div>
+              <div className="input"><label htmlFor="co-last-name">Apellido</label><input id="co-last-name" type="text" value={form.lastName} onChange={set("lastName")} /></div>
+              <div className="input" style={{ gridColumn: "1 / -1" }}><label htmlFor="co-email">Email</label><input id="co-email" type="email" required value={form.email} onChange={set("email")} /></div>
               <div className="input" style={{ gridColumn: "1 / -1" }}>
-                <label>Contraseña del panel</label>
-                <input type="password" required minLength={8} placeholder="Mínimo 8 caracteres" value={form.password} onChange={set("password")} />
+                <label htmlFor="co-password">Contraseña del panel</label>
+                <input id="co-password" type="password" required minLength={8} placeholder="Mínimo 8 caracteres" value={form.password} onChange={set("password")} />
                 <span className="input-hint">La vas a usar para entrar al panel y administrar tu servidor.</span>
               </div>
             </div>
@@ -283,26 +315,26 @@ export default function Checkout() {
             {pay === "card" && (
               <div className="input-row">
                 <div className="input">
-                  <label>Número de tarjeta</label>
+                  <label htmlFor="co-card-number">Número de tarjeta</label>
                   <div style={{ position: "relative" }}>
                     <input
-                      type="text" inputMode="numeric" placeholder="1234 5678 9012 3456"
+                      id="co-card-number" type="text" inputMode="numeric" placeholder="1234 5678 9012 3456"
                       value={form.cardNumber} onChange={setCardNumber}
                       style={{ paddingRight: cardBrand ? 70 : undefined }}
                     />
                     {cardBrand && (
                       <span style={{
                         position: "absolute", right: 12, top: "50%", transform: "translateY(-50%)",
-                        fontSize: 11, fontWeight: 700, color: "var(--blue)",
-                        background: "rgba(55,138,221,0.1)", padding: "3px 8px", borderRadius: 6,
+                        fontSize: 11, fontWeight: 700, color: "var(--accent)",
+                        background: "rgba(242,179,61,0.14)", padding: "3px 8px", borderRadius: 6,
                       }}>{cardBrand.label}</span>
                     )}
                   </div>
                 </div>
                 <div className="input-row" style={{ gridTemplateColumns: "1fr 1fr 1fr", margin: 0 }}>
-                  <div className="input"><label>Vencimiento</label><input type="text" inputMode="numeric" placeholder="MM/AA" value={form.cardExpiry} onChange={setCardExpiry} /></div>
-                  <div className="input"><label>CVC</label><input type="text" inputMode="numeric" placeholder={cardBrand?.id === "amex" ? "1234" : "123"} value={form.cardCvc} onChange={setCardCvc} /></div>
-                  <div className="input"><label>Cuotas</label><select><option>1 cuota</option><option>3 cuotas</option><option>6 cuotas</option><option>12 cuotas</option></select></div>
+                  <div className="input"><label htmlFor="co-card-expiry">Vencimiento</label><input id="co-card-expiry" type="text" inputMode="numeric" placeholder="MM/AA" value={form.cardExpiry} onChange={setCardExpiry} /></div>
+                  <div className="input"><label htmlFor="co-card-cvc">CVC</label><input id="co-card-cvc" type="text" inputMode="numeric" placeholder={cardBrand?.id === "amex" ? "1234" : "123"} value={form.cardCvc} onChange={setCardCvc} /></div>
+                  <div className="input"><label htmlFor="co-installments">Cuotas</label><select id="co-installments"><option>1 cuota</option><option>3 cuotas</option><option>6 cuotas</option><option>12 cuotas</option></select></div>
                 </div>
               </div>
             )}

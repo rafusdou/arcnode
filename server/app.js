@@ -1,4 +1,4 @@
-// Backend for the ArcNode.cc checkout simulation.
+// Backend for the Changuihost checkout simulation.
 //
 // The "payment" step is entirely fake (any card/data is accepted), but the
 // server it provisions afterwards is real: it talks to the Pterodactyl
@@ -6,16 +6,18 @@
 // panel. The API key never reaches the browser — only this process holds it.
 //
 // This module only builds the Express app (no listen()) so it can run both
-// as a long-lived local process (server/index.js) and as a Vercel
-// serverless function (api/[...all].js).
+// as a long-lived local process (server/index.js) and as Vercel serverless
+// functions (the files under api/).
 
 import express from "express";
-import { ARCNODE_PLANS } from "../src/data/plans.js";
+import { PLANS } from "../src/data/plans.js";
+import { hasPanelConfig, pterodactyl, pterodactylClient } from "./ptero.js";
+import {
+  customerHasFreeServer, freeExternalId, getFreeOwner,
+  getFreeServerView, startFreeServer, startToken, issueTicket, verifyStartToken,
+} from "./freeplan.js";
 
 const {
-  PTERODACTYL_URL,
-  PTERODACTYL_API_KEY,
-  PTERODACTYL_CLIENT_KEY,
   PTERODACTYL_NODE_ID = "1",
   PTERODACTYL_NEST_ID = "1",
   LAN_IP = "localhost",
@@ -35,47 +37,6 @@ const SERVER_TYPES = {
   vanilla: { eggId: 3, label: "Vanilla", versionVar: "VANILLA_VERSION" },
   forge: { eggId: 2, label: "Forge", versionVar: "MC_VERSION" },
 };
-
-async function pterodactyl(path, options = {}) {
-  const res = await fetch(`${PTERODACTYL_URL}${path}`, {
-    ...options,
-    headers: {
-      Authorization: `Bearer ${PTERODACTYL_API_KEY}`,
-      Accept: "application/json",
-      "Content-Type": "application/json",
-      ...options.headers,
-    },
-  });
-  const text = await res.text();
-  const body = text ? JSON.parse(text) : null;
-  if (!res.ok) {
-    const detail = body?.errors?.[0]?.detail || res.statusText;
-    const err = new Error(`Pterodactyl ${path} -> ${res.status}: ${detail}`);
-    err.status = res.status;
-    err.body = body;
-    throw err;
-  }
-  return body;
-}
-
-// The Client API acts on behalf of the server's owner, but an admin's
-// client key is also accepted for any server on the panel — used here only
-// for the live "is it running yet" status check.
-async function pterodactylClient(path, options = {}) {
-  const res = await fetch(`${PTERODACTYL_URL}${path}`, {
-    ...options,
-    headers: {
-      Authorization: `Bearer ${PTERODACTYL_CLIENT_KEY}`,
-      Accept: "application/json",
-      ...options.headers,
-    },
-  });
-  if (!res.ok && res.status !== 204) {
-    throw new Error(`Pterodactyl client ${path} -> ${res.status}`);
-  }
-  const text = await res.text();
-  return text ? JSON.parse(text) : null;
-}
 
 // Wings runs the startup line through unquoted variable expansion (not a
 // real shell invocation) — command substitutions $(...) still get evaluated
@@ -129,15 +90,8 @@ function randomSuffix() {
   return Math.random().toString(36).slice(2, 6);
 }
 
-// Stored as the server's description so free-plan servers can be told apart
-// later (one-per-user check here, ad/inactivity worker in docs/PLAN-GRATIS.md).
-const planDescription = (plan) => `ArcNode plan: ${plan.name}`;
-
-async function userHasFreeServer(userId, freePlan) {
-  const res = await pterodactyl(`/api/application/users/${userId}?include=servers`);
-  const servers = res.attributes.relationships?.servers?.data || [];
-  return servers.some((s) => s.attributes.description === planDescription(freePlan));
-}
+// Shown to the customer under the server name in their panel dashboard.
+const planDescription = (plan) => (plan.free ? "Plan gratis de Changuihost" : `Plan ${plan.name} de Changuihost`);
 
 async function findUserByEmail(email) {
   const res = await pterodactyl(`/api/application/users?filter[email]=${encodeURIComponent(email)}`);
@@ -153,7 +107,7 @@ async function createUser({ email, firstName, lastName, password }) {
       email,
       username,
       first_name: firstName || "Cliente",
-      last_name: lastName || "ArcNode",
+      last_name: lastName || "Changuihost",
       password,
     }),
   });
@@ -178,7 +132,7 @@ async function findFreeAllocation() {
   return created;
 }
 
-async function createServer({ user, plan, serverName, allocation, serverType, minecraftVersion }) {
+async function createServer({ owner, customer, plan, serverName, allocation, serverType, minecraftVersion }) {
   const type = SERVER_TYPES[serverType] || SERVER_TYPES.paper;
   const egg = await getEgg(type.eggId);
 
@@ -199,9 +153,10 @@ async function createServer({ user, plan, serverName, allocation, serverType, mi
   const res = await pterodactyl("/api/application/servers", {
     method: "POST",
     body: JSON.stringify({
-      name: serverName || `${plan.name} — ${user.username}`,
+      name: serverName || `${plan.name} — ${customer.username}`,
       description: planDescription(plan),
-      user: user.id,
+      external_id: plan.free ? freeExternalId(customer.id) : null,
+      user: owner.id,
       egg: type.eggId,
       nest: NEST_ID,
       docker_image: egg.docker_image,
@@ -210,7 +165,8 @@ async function createServer({ user, plan, serverName, allocation, serverType, mi
       limits: { memory, swap: 0, disk, io: 500, cpu: cpuLimitFor(plan) },
       feature_limits: { databases: 0, backups: plan.backups ? 1 : 0, allocations: 1 },
       allocation: { default: allocation.id },
-      start_on_completion: true,
+      // Free servers are turned on from the start page, never automatically.
+      start_on_completion: !plan.free,
     }),
   });
   return { server: res.attributes, typeLabel: type.label };
@@ -221,7 +177,7 @@ app.use(express.json());
 
 app.post("/api/checkout", async (req, res) => {
   try {
-    if (!PTERODACTYL_URL || !PTERODACTYL_API_KEY || !PTERODACTYL_CLIENT_KEY) {
+    if (!hasPanelConfig()) {
       return res.status(500).json({ success: false, error: "El backend no tiene configuradas las credenciales de Pterodactyl." });
     }
 
@@ -240,23 +196,27 @@ app.post("/api/checkout", async (req, res) => {
       return res.status(400).json({ success: false, error: "Tipo de servidor inválido." });
     }
 
-    const plan = ARCNODE_PLANS.find((p) => p.name === planName) || ARCNODE_PLANS.find((p) => p.name === "Blaze");
+    const plan = PLANS.find((p) => p.name === planName) || PLANS.find((p) => p.name === "Blaze");
 
     if (plan.free && serverType === "forge") {
       return res.status(400).json({ success: false, error: "El plan gratis es solo para Paper o Vanilla." });
     }
 
     let user = await findUserByEmail(email);
-    if (user && plan.free && (await userHasFreeServer(user.id, plan))) {
+    if (user && plan.free && (await customerHasFreeServer(user.id))) {
       return res.status(400).json({ success: false, error: "Ya tenés un servidor gratis con este email." });
     }
     if (!user) {
       user = await createUser({ email, firstName, lastName, password });
     }
 
+    // Free servers belong to a service account; the customer gets access as a
+    // subuser that can't start them, added once the install finishes (see
+    // server/freeplan.js).
+    const owner = plan.free ? await getFreeOwner() : user;
     const allocation = await findFreeAllocation();
     const { server, typeLabel } = await createServer({
-      user, plan, serverName, allocation, serverType, minecraftVersion,
+      owner, customer: user, plan, serverName, allocation, serverType, minecraftVersion,
     });
 
     res.json({
@@ -267,6 +227,7 @@ app.post("/api/checkout", async (req, res) => {
         username: user.username,
         password,
       },
+      start: plan.free ? { identifier: server.identifier, token: startToken(server.identifier) } : null,
       server: {
         id: server.id,
         identifier: server.identifier,
@@ -287,7 +248,7 @@ app.post("/api/checkout", async (req, res) => {
 app.get("/api/status", async (req, res) => {
   res.set("Cache-Control", "no-store");
   const checkedAt = new Date().toISOString();
-  if (!PTERODACTYL_URL || !PTERODACTYL_API_KEY) {
+  if (!hasPanelConfig()) {
     return res.json({ panel: "down", checkedAt });
   }
   try {
@@ -316,5 +277,45 @@ app.get("/api/checkout/status/:id", async (req, res) => {
     res.json({ installed, running });
   } catch {
     res.status(404).json({ installed: false, running: false });
+  }
+});
+
+// ---------- Free plan start page (/arrancar) ----------
+// Every request carries the start link's token (?t=), signed per server.
+
+function requireStartToken(req, res) {
+  if (verifyStartToken(req.params.identifier, req.query.t)) return true;
+  res.status(403).json({ error: "Este link de arranque no es válido." });
+  return false;
+}
+
+function sendFreeError(res, err) {
+  if (!err.publicMessage) console.error(err);
+  const status = err.status && err.status < 500 ? err.status : 500;
+  res.status(status).json({ error: err.publicMessage || "No se pudo completar. Probá de nuevo en unos segundos." });
+}
+
+app.get("/api/free/:identifier", async (req, res) => {
+  res.set("Cache-Control", "no-store");
+  if (!requireStartToken(req, res)) return;
+  try {
+    const view = await getFreeServerView(req.params.identifier);
+    if (!view) return res.status(404).json({ error: "Este link no es de un servidor gratis." });
+    res.json(view);
+  } catch (err) {
+    sendFreeError(res, err);
+  }
+});
+
+app.post("/api/free/:identifier/:action", async (req, res) => {
+  if (!requireStartToken(req, res)) return;
+  const { identifier, action } = req.params;
+  try {
+    if (action === "queue") return res.json({ ticket: issueTicket(identifier, "queue") });
+    if (action === "ad") return res.json({ ticket: issueTicket(identifier, "ad") });
+    if (action === "start") return res.json(await startFreeServer(identifier, req.body || {}));
+    res.status(404).json({ error: "Acción desconocida." });
+  } catch (err) {
+    sendFreeError(res, err);
   }
 });

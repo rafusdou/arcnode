@@ -1,4 +1,4 @@
-// ArcNode.cc — Minecraft hosting plans.
+// Changuihost — Minecraft hosting plans.
 // Pricing rule per docs: flat $1.80 USD / GB RAM on every paid plan.
 // Generated from the plan table so price, ARS conversion and tier
 // thresholds live in one place instead of 25 hardcoded objects.
@@ -71,4 +71,4 @@ PLAN_NAMES.forEach((name, i) => {
   });
 });
 
-export const ARCNODE_PLANS = plans;
+export const PLANS = plans;
