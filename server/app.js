@@ -273,7 +273,8 @@ app.get("/api/admin/metrics", async (req, res) => {
       signal: AbortSignal.timeout(10 * 1000),
     });
     res.status(upstream.status).type("application/json").send(await upstream.text());
-  } catch {
+  } catch (err) {
+    console.error("Agente de métricas:", err.message, err.cause?.code || err.cause?.message || "");
     res.status(502).json({ error: "agent_unreachable" });
   }
 });
