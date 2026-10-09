@@ -14,10 +14,12 @@ import Afiliados from "./pages/Afiliados.jsx";
 import Terminos from "./pages/Terminos.jsx";
 import Privacidad from "./pages/Privacidad.jsx";
 import Arrancar from "./pages/Arrancar.jsx";
+import Admin from "./pages/Admin.jsx";
 
 export default function App() {
   return (
     <Routes>
+      <Route path="/admin" element={<Admin />} />
       <Route element={<Layout />}>
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />

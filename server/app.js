@@ -259,6 +259,25 @@ app.get("/api/status", async (req, res) => {
   }
 });
 
+// Admin dashboard. Host numbers (CPU, RAM, disk) can only be read on the core
+// machine itself, so they come from the metrics agent running there
+// (agent/index.js). This just forwards the admin's password; the agent is
+// the one that checks it.
+app.get("/api/admin/metrics", async (req, res) => {
+  res.set("Cache-Control", "no-store");
+  const { METRICS_URL = "http://localhost:4100" } = process.env;
+  const range = ["1h", "24h", "7d"].includes(req.query.range) ? req.query.range : "24h";
+  try {
+    const upstream = await fetch(`${METRICS_URL}/metrics?range=${range}`, {
+      headers: { Authorization: req.get("authorization") || "" },
+      signal: AbortSignal.timeout(10 * 1000),
+    });
+    res.status(upstream.status).type("application/json").send(await upstream.text());
+  } catch {
+    res.status(502).json({ error: "agent_unreachable" });
+  }
+});
+
 app.get("/api/checkout/status/:id", async (req, res) => {
   try {
     const data = await pterodactyl(`/api/application/servers/${req.params.id}`);
