@@ -364,6 +364,13 @@ PowerShell como administrador.
   el 443). Dos direcciones:
   - `panel.changuihost.com` → panel (`localhost:8080`).
   - `metrics.changuihost.com` → agente de métricas (`localhost:4100`).
+  - `node.changuihost.com` → Wings (`localhost:8443`). Lo usa la consola del
+    panel (websocket) y el propio panel para hablar con Wings. En el panel el
+    nodo es `https://node.changuihost.com:443` con "behind proxy"; en
+    `/etc/pterodactyl/config.yml` Wings sigue en 8443 sin SSL, con
+    `allowed_origins` (panel y localhost:8080) e
+    `ignore_panel_config_updates: true` para que editar el nodo en el panel no
+    le pise el puerto. El SFTP (2022) no pasa por el túnel: no anda desde afuera.
 - En Vercel: `PTERODACTYL_URL=https://panel.changuihost.com` y
   `METRICS_URL=https://metrics.changuihost.com`. Ya no hay que tocarlas.
 - El certificado de la cuenta está en `~/.cloudflared/cert.pem` (sirve para
