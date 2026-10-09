@@ -31,7 +31,7 @@ export async function execute(interaction) {
     .setTitle(p.free ? `${p.name} (gratis)` : p.name)
     .addFields(
       { name: "RAM", value: p.free ? "—" : `${p.ram} GB`, inline: true },
-      { name: "Jugadores", value: p.free ? `hasta ${p.players}` : "Sin límite", inline: true },
+      { name: "Jugadores", value: p.maxPlayers ? `hasta ${p.maxPlayers}` : "Sin límite", inline: true },
       { name: "Disco", value: `${parseInt(p.ssd, 10)} GB`, inline: true },
       { name: "Precio", value: p.free ? "Gratis" : `US$${p.price.toFixed(2)} / mes (≈ $${p.priceARS.toLocaleString("es-AR")} ARS)`, inline: false },
       { name: "Backups", value: p.backups ? "Desde el panel" : "No", inline: true },

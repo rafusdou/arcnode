@@ -29,6 +29,10 @@ const TIERS = [
   { name: "Avanzado", desc: "13 – 20 GB · servidores grandes y redes", from: 13, to: 20 },
   { name: "Elite", desc: "21 – 25 GB · redes BungeeCord profesionales", from: 21, to: 25 },
 ];
+// Hard player cap for the Basic tier (enforced on the server, see
+// playersPrefix in server/app.js). From 6 GB up there's no cap.
+const BASIC_MAX_PLAYERS = { 1: 5, 2: 8, 3: 12, 4: 16, 5: 20 };
+
 const tierFor = (ram) => TIERS.find((t) => ram >= t.from && ram <= t.to);
 
 const backupsFor = (ram) => {
@@ -43,7 +47,7 @@ const plans = [
   {
     tier: "Gratis", tierDesc: "Para probar el servicio",
     name: "Piedra", ram: 0, price: 0, priceARS: 0, pgb: null, pgbARS: null,
-    free: true, players: 3, ssd: "2 GB", modpacks: false,
+    free: true, players: 3, maxPlayers: 3, ssd: "2 GB", modpacks: false,
     backups: false, ip: false, ddos: false, support: false,
   },
 ];
@@ -61,6 +65,7 @@ PLAN_NAMES.forEach((name, i) => {
     priceARS: Math.round(price * USD_TO_ARS),
     pgb: PRICE_PER_GB, pgbARS: PRICE_PER_GB_ARS,
     players,
+    maxPlayers: BASIC_MAX_PLAYERS[ram] ?? null,
     ssd: ram >= 8 ? `${players} GB NVMe` : `${players} GB`,
     modpacks: ram >= 6 ? "a pedido" : false,
     backups: backupsFor(ram),

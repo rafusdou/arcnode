@@ -358,7 +358,7 @@ export default function Checkout() {
             <div className="summary-line"><span>Plan</span><strong>{isFree ? `${plan.name} (gratis)` : plan.name}</strong></div>
             {!isFree && <div className="summary-line"><span>RAM</span><strong>{plan.ram} GB</strong></div>}
             <div className="summary-line"><span>Almacenamiento</span><strong>{plan.ssd}</strong></div>
-            <div className="summary-line"><span>Jugadores</span><strong>{isFree ? `hasta ${plan.players}` : "Sin límite"}</strong></div>
+            <div className="summary-line"><span>Jugadores</span><strong>{plan.maxPlayers ? `hasta ${plan.maxPlayers}` : "Sin límite"}</strong></div>
             <div className="summary-line"><span>Tipo</span><strong>{SERVER_TYPES.find((t) => t.value === form.serverType)?.label}</strong></div>
             <div className="summary-line"><span>Soporte</span><strong>{isFree ? "Básico" : "Por Discord"}</strong></div>
             {!isFree && cycle !== "monthly" && (

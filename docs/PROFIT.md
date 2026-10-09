@@ -23,7 +23,7 @@ Comparado con el mercado (investigado en octubre 2026):
 | BisectHosting (Premium NVMe) | $4.99 |
 
 Changuihost queda más barato que todos excepto el tier más pelado de PebbleHost,
-y ningún plan pago limita la cantidad de jugadores. Lo que todavía no
+y desde 6 GB no hay límite de jugadores (los planes de 1 a 5 GB tienen un tope de 5 a 20, que empuja a subir de plan). Lo que todavía no
 tenemos y la competencia sí: protección anti-DDoS. No se promete en la web
 hasta que esté (ver la propuesta de anti-DDoS con la VPS).
 

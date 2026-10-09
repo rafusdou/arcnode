@@ -51,14 +51,14 @@ const SERVER_TYPES = {
 // (fairly different) startup logic.
 const EULA_PREFIX = '$([ -f eula.txt ] || echo "eula=true" > eula.txt) ';
 
-// Minecraft defaults to max-players=20. Paid plans have no player cap, so the
-// key is set high on first boot — only when missing, so an owner who wants a
-// cap can still lower it in server.properties. The free plan's cap is
-// rewritten on every boot instead, so editing the file doesn't lift it.
+// Minecraft defaults to max-players=20. Plans with a cap (free and Basic) get
+// it rewritten on every boot, so editing server.properties doesn't lift it.
+// Uncapped plans get a high value on first boot only — when the key is
+// missing — so an owner who wants a cap can still lower it.
 const UNLIMITED_PLAYERS = 1000;
 const playersPrefix = (plan) =>
-  plan.free
-    ? `$(sed -i "/^max-players=/d" server.properties 2>/dev/null; echo "max-players=${plan.players}" >> server.properties) `
+  plan.maxPlayers
+    ? `$(sed -i "/^max-players=/d" server.properties 2>/dev/null; echo "max-players=${plan.maxPlayers}" >> server.properties) `
     : `$(grep -q "^max-players=" server.properties 2>/dev/null || echo "max-players=${UNLIMITED_PLAYERS}" >> server.properties) `;
 
 async function getEgg(eggId) {

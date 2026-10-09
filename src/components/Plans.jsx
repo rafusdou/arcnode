@@ -23,7 +23,7 @@ function PlanCard({ p, selected, currency, t }) {
         {!p.free && <span>{t.plans.perMonth}</span>}
       </div>
       <ul className="plan-feats">
-        <li>{p.free ? t.plans.players(p.players) : t.plans.unlimitedPlayers}</li>
+        <li>{p.maxPlayers ? t.plans.players(p.maxPlayers) : t.plans.unlimitedPlayers}</li>
         <li>{t.plans.disk(parseInt(p.ssd, 10))}</li>
         <li className={p.backups ? undefined : "off"}>{p.backups ? t.plans.backups : t.plans.noBackups}</li>
         <li>{p.free ? t.plans.supportBasic : t.plans.supportDiscord}</li>
