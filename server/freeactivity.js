@@ -18,7 +18,10 @@ import { pterodactylClient } from "./ptero.js";
 import { pingPlayers } from "./mcping.js";
 import { PLANS, PRICE_PER_GB } from "../src/data/plans.js";
 
-const { PING_HOST = "127.0.0.1" } = process.env;
+// The bot runs on the core machine (node CORE_NODE_ID), so that node's
+// servers are pinged on 127.0.0.1; servers on other nodes (the Mac) on their
+// allocation's alias, which is reachable over Tailscale.
+const { CORE_NODE_ID = "1" } = process.env;
 
 const MIN = 60 * 1000;
 const IDLE_STOP_MS = Number(process.env.FREE_IDLE_STOP_MINUTES || 15) * MIN;
@@ -116,9 +119,12 @@ function versionOf(server) {
   return v ? v.server_value || v.default_value : "latest";
 }
 
-function portOf(server) {
+function pingTarget(server) {
   const allocs = server.relationships?.allocations?.data || [];
-  return allocs.map((a) => a.attributes).find((a) => a.id === server.allocation)?.port || null;
+  const alloc = allocs.map((a) => a.attributes).find((a) => a.id === server.allocation);
+  if (!alloc) return null;
+  const host = String(server.node) === CORE_NODE_ID ? "127.0.0.1" : alloc.alias || alloc.ip;
+  return { host, port: alloc.port };
 }
 
 const send = (identifier, command) =>
@@ -165,8 +171,8 @@ async function checkServer(server, log) {
     return;
   }
 
-  const port = portOf(server);
-  const ping = port ? await pingPlayers(port, PING_HOST) : null;
+  const target = pingTarget(server);
+  const ping = target ? await pingPlayers(target.port, target.host) : null;
   // Still booting (not answering pings yet): don't count it as empty.
   if (!ping) return;
 

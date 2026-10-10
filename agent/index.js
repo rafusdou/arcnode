@@ -26,6 +26,9 @@ const {
   METRICS_HOST = "127.0.0.1",
   METRICS_DATA_DIR = path.join(path.dirname(fileURLToPath(import.meta.url)), "data"),
   PTERODACTYL_NODE_ID = "1",
+  // The node this agent runs on: its servers are pinged on 127.0.0.1, the
+  // rest (e.g. the Mac) on their allocation alias, over Tailscale.
+  CORE_NODE_ID = "1",
 } = process.env;
 
 if (!METRICS_TOKEN || METRICS_TOKEN.length < 16) {
@@ -157,6 +160,7 @@ async function listServers() {
       installing: a.status === "installing" || a.status === "install_failed",
       limits: a.limits,
       port: alloc?.port || null,
+      pingHost: String(a.node) === CORE_NODE_ID ? "127.0.0.1" : alloc?.alias || alloc?.ip,
     };
   });
   serverList = { at: Date.now(), data };
@@ -181,7 +185,7 @@ async function serverStats(s) {
       mem: r.resources.memory_bytes,
       disk: r.resources.disk_bytes,
       uptimeMs: r.resources.uptime,
-      players: running && s.port ? await pingPlayers(s.port) : null,
+      players: running && s.port ? await pingPlayers(s.port, s.pingHost) : null,
     };
   } catch (err) {
     // 409 = the panel is still installing or transferring it.
