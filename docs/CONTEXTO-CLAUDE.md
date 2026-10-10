@@ -223,8 +223,9 @@ Es la única fuente de verdad: la usan el sitio, el backend y el bot.
 - **Jugadores:** con el mismo truco, los planes con tope reescriben
   `max-players` en cada arranque (editar el archivo no lo levanta); los planes
   sin tope arrancan con `max-players=1000` solo la primera vez.
-- **CPU:** medio núcleo por GB, mínimo medio núcleo, máximo 2 núcleos
-  (`cpuLimitFor`). Está pensado para no saturar máquinas chicas.
+- **CPU:** medio núcleo por GB, mínimo **1 núcleo**, máximo 2 núcleos
+  (`cpuLimitFor`). Con medio núcleo, Vanilla nuevo se colgaba en la Mac y lo
+  mataba el Server Watchdog. Es un tope, no una reserva.
 - **Tipos de servidor:** Paper (egg 5), Vanilla (egg 3) y Forge (egg 2). Son
   los eggs que trae Pterodactyl. Fabric, NeoForge y Bedrock no existen en el
   panel: no ofrecerlos.

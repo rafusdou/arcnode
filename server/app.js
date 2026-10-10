@@ -99,7 +99,10 @@ const ssdToMb = (ssd) => {
 // enough that a handful of concurrent servers can't starve each other on a
 // 2-4 core machine. Revisit the cap once there's a node with cores to spare.
 const CPU_PER_GB = 50; // 0.5 core per GB of RAM
-const CPU_MIN = 50; // half a core, even for the free plan
+// A full core at least: with half a core, current Minecraft versions on an
+// older CPU (the Mac's 2012 i7) can take over 60 s for a single tick and
+// the server kills itself (Server Watchdog). It's a cap, not a reservation.
+const CPU_MIN = 100;
 const CPU_MAX = 200; // 2 cores, regardless of how big the plan is
 const cpuLimitFor = (plan) => {
   const scaled = Math.max(plan.ram, 1) * CPU_PER_GB;

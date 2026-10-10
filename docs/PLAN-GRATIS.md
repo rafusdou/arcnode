@@ -37,7 +37,7 @@ del juego.
 | Límite | Valor | Cómo se aplica | Estado |
 |---|---|---|---|
 | RAM | 1 GB | `memory` = 1024 cuando `plan.ram === 0` en `server/app.js` | Ya está |
-| CPU | 50% de un núcleo | `CPU_MIN` en `server/app.js` | Ya está |
+| CPU | 1 núcleo | `CPU_MIN` en `server/app.js`. Con medio núcleo, las versiones nuevas en la CPU de la Mac (i7 de 2012) se colgaban más de 60 s en un tick y Minecraft se cerraba solo (Server Watchdog) | Ya está |
 | Disco | 2 GB | `plan.ssd = "2 GB"` → `ssdToMb` | Ya está |
 | Backups | 0 | `feature_limits.backups = 0` (el plan tiene `backups: false`) | Ya está |
 | Bases de datos | 0 | `feature_limits.databases = 0` | Ya está |
