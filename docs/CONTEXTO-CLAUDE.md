@@ -417,6 +417,29 @@ PowerShell como administrador.
 - Al pasar a la VPS: instalar Node, copiar el `.service` (ajustar rutas) y
   agregar `metrics.<dominio>` al túnel.
 
+### Segundo nodo: la Mac de Tomi (desde el 10/10/2026)
+
+- MacBook Pro 2012 con **Ubuntu 24.04**, 8 hilos, 16 GB, 935 GB. Hostname
+  `changuihostmac`, IP de Tailscale **100.66.151.67** (está en el tailnet de
+  Tomi, compartida con la cuenta de Rafa). WiFi de la casa (192.168.68.x).
+- Acceso: desde WSL con `ssh -i ~/.ssh/changuihost_mac changuihost@100.66.151.67`
+  (usuario `changuihost` con sudo sin contraseña; solo entra con esa llave).
+- WSL también está en Tailscale (`changuihost-core`, 100.104.177.45), así el
+  bot y el agente llegan a los servidores de la Mac.
+- En la Mac: Docker (docker.io), Wings 1.13 (puerto local 8080, sin SSL,
+  `remote: https://panel.changuihost.com`, `ignore_panel_config_updates`) y
+  su propio túnel `changuihost-mac` → `node2.changuihost.com`. Todo como
+  servicios systemd. Suspensión desactivada (tapa cerrada no la duerme).
+- En el panel es el **nodo 2 "Mac Tomi"** (14 GB, 400 GB), con puertos
+  25565–25580 en 0.0.0.0 y alias 100.66.151.67: los jugadores entran **por
+  Tailscale** (tienen que estar en el tailnet o tener la Mac compartida).
+- DNS: el router daba un DNS muerto (192.168.1.1). Se fijó 1.1.1.1/8.8.8.8 en
+  `/etc/netplan/70-wifi.yaml` (aplica al reiniciar; ya aplicado en caliente) y
+  `tailscale set --accept-dns=false` en la Mac.
+- La web sigue creando servidores en el nodo que diga `PTERODACTYL_NODE_ID`
+  (Vercel). `CORE_NODE_ID` (por defecto 1) es el nodo donde corren el bot y el
+  agente.
+
 ### Herramientas instaladas en WSL
 
 `cloudflared`, Node 22, `librsvg2-bin` (rsvg-convert) e `imagemagick`.
