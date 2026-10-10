@@ -21,6 +21,7 @@ const {
   PTERODACTYL_NODE_ID = "1",
   PTERODACTYL_NEST_ID = "1",
   LAN_IP = "localhost",
+  PANEL_PUBLIC_URL = "https://panel.changuihost.com",
 } = process.env;
 
 const NODE_ID = Number(PTERODACTYL_NODE_ID);
@@ -143,7 +144,9 @@ async function findFreeAllocation() {
   const nextPort = maxPort + 1;
   await pterodactyl(`/api/application/nodes/${NODE_ID}/allocations`, {
     method: "POST",
-    body: JSON.stringify({ ip: "0.0.0.0", alias: LAN_IP, ports: [String(nextPort)] }),
+    // Same address players already use for this node (e.g. the Mac's
+    // Tailscale IP); LAN_IP only for a node that has no ports yet.
+    body: JSON.stringify({ ip: "0.0.0.0", alias: allocations[0]?.alias || LAN_IP, ports: [String(nextPort)] }),
   });
   const res2 = await pterodactyl(`/api/application/nodes/${NODE_ID}/allocations?per_page=200`);
   const created = res2.data.map((d) => d.attributes).find((a) => a.port === nextPort);
@@ -241,7 +244,7 @@ app.post("/api/checkout", async (req, res) => {
     res.json({
       success: true,
       panel: {
-        url: `http://${LAN_IP}:8080`,
+        url: PANEL_PUBLIC_URL,
         email: user.email,
         username: user.username,
         password,
