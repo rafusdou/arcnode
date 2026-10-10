@@ -36,7 +36,7 @@ function FreeSuccessScreen({ result }) {
         <p className="free-done-note">Para la consola y los archivos del servidor.</p>
         <div className="summary-line"><span>Panel</span><strong>{result.panel.url}</strong></div>
         <div className="summary-line"><span>Email</span><strong>{result.panel.email}</strong></div>
-        <div className="summary-line"><span>Contraseña</span><strong>{result.panel.password}</strong></div>
+        <PanelPassword panel={result.panel} />
         <div className="summary-line"><span>Dirección para conectarte</span><strong className="mono">{result.server.ip}:{result.server.port}</strong></div>
       </div>
     </div>
@@ -95,7 +95,7 @@ function SuccessScreen({ result }) {
           <div className="summary-line"><span>Panel de administración</span><strong>{result.panel.url}</strong></div>
           <div className="summary-line"><span>Usuario del panel</span><strong>{result.panel.username}</strong></div>
           <div className="summary-line"><span>Email</span><strong>{result.panel.email}</strong></div>
-          <div className="summary-line"><span>Contraseña</span><strong>{result.panel.password}</strong></div>
+          <PanelPassword panel={result.panel} />
         </div>
 
         <div style={{ display: "flex", gap: 10, marginTop: 28 }}>
@@ -109,6 +109,24 @@ function SuccessScreen({ result }) {
         </p>
       </div>
     </div>
+  );
+}
+
+// If the email already had a panel account, the checkout doesn't touch its
+// password (see server/app.js), so showing the one typed here would be wrong.
+function PanelPassword({ panel }) {
+  if (!panel.existingAccount) {
+    return <div className="summary-line"><span>Contraseña</span><strong>{panel.password}</strong></div>;
+  }
+  return (
+    <>
+      <div className="summary-line"><span>Contraseña</span><strong>La que ya tenías</strong></div>
+      <p className="free-done-note">
+        Este email ya tenía una cuenta en el panel, así que se usa esa misma, con su contraseña de
+        siempre (no la que escribiste ahora). Si no te acordás, tocá «Forgot password?» en el panel y te
+        llega un mail para elegir una nueva.
+      </p>
+    </>
   );
 }
 

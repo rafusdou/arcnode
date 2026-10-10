@@ -225,6 +225,9 @@ app.post("/api/checkout", async (req, res) => {
     }
 
     let user = await findUserByEmail(email);
+    // An existing account keeps its own password: changing it here would let
+    // anyone take over an account just by checking out with its email.
+    const existingAccount = !!user;
     if (user && plan.free && (await customerHasFreeServer(user.id))) {
       return res.status(400).json({ success: false, error: "Ya tenés un servidor gratis con este email." });
     }
@@ -247,7 +250,8 @@ app.post("/api/checkout", async (req, res) => {
         url: PANEL_PUBLIC_URL,
         email: user.email,
         username: user.username,
-        password,
+        password: existingAccount ? null : password,
+        existingAccount,
       },
       start: plan.free ? { identifier: server.identifier, token: startToken(server.identifier) } : null,
       server: {
